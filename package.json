@@ -1,0 +1,35 @@
+{
+  "name": "zaidipro-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:api": "node server.js",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:api\"",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "setup-db": "curl -X POST http://localhost:3001/api/setup-db",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "cors": "^2.8.6",
+    "lucide-react": "^1.47.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "concurrently": "^9.1.2",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "oxlint": "^1.81.0",
+    "vite": "^8.3.0"
+  }
+}
