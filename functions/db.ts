@@ -1,4 +1,8 @@
-import sql from './db.js'
+import { neon } from "@neondatabase/serverless";
+
+const sql = neon(process.env.DATABASE_URL!);
+
+export default sql;
 
 export async function initDatabase() {
   await sql`
@@ -14,15 +18,15 @@ export async function initDatabase() {
       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
       status VARCHAR(20) DEFAULT 'new' CHECK (status IN ('new', 'read', 'archived'))
     )
-  `
+  `;
 
   await sql`
-    CREATE INDEX IF NOT EXISTS idx_contact_submissions_created_at
+    CREATE INDEX IF NOT EXISTS idx_contact_created_at
     ON contact_submissions (created_at DESC)
-  `
+  `;
 
   await sql`
-    CREATE INDEX IF NOT EXISTS idx_contact_submissions_status
+    CREATE INDEX IF NOT EXISTS idx_contact_status
     ON contact_submissions (status)
-  `
+  `;
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { Send, Mail, MessageCircle, CheckCircle, Loader2 } from 'lucide-react'
+import { API_CONFIG } from '../config/api'
 
 const WHATSAPP_NUMBER = '923256232379'
 
@@ -48,7 +49,7 @@ export default function Contact() {
     setErrorMsg('')
 
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(API_CONFIG.contact, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
