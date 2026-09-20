@@ -20,6 +20,11 @@
   box-sizing: border-box;
 }
 
+x:-webkit-email-address,
+a[href^="mailto:"] {
+  -webkit-user-modify: read-only;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;

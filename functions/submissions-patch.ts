@@ -9,7 +9,7 @@ async function ensureDb() {
   }
 }
 
-function cors(status: number, body: unknown): Response {
+function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
@@ -23,25 +23,38 @@ function cors(status: number, body: unknown): Response {
 
 export default async function submissionsPatch(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
-    return cors(204, null);
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "PATCH, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
   }
 
   if (req.method !== "PATCH") {
-    return cors(405, { error: "Method not allowed" });
+    return json(405, { error: "Method not allowed" });
   }
 
   try {
     await ensureDb();
 
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return json(400, { error: "Invalid JSON body" });
+    }
+
     const { id, status } = body;
 
     if (!id || !status) {
-      return cors(400, { error: "Missing required fields: id, status" });
+      return json(400, { error: "Missing required fields: id, status" });
     }
 
     if (!["new", "read", "archived"].includes(status)) {
-      return cors(400, { error: "Status must be new, read, or archived" });
+      return json(400, { error: "Status must be new, read, or archived" });
     }
 
     const result = await sql`
@@ -52,10 +65,10 @@ export default async function submissionsPatch(req: Request): Promise<Response> 
     `;
 
     if (result.length === 0) {
-      return cors(404, { error: "Submission not found" });
+      return json(404, { error: "Submission not found" });
     }
 
-    return cors(200, {
+    return json(200, {
       success: true,
       data: {
         id: result[0].id,
@@ -65,6 +78,6 @@ export default async function submissionsPatch(req: Request): Promise<Response> 
     });
   } catch (err) {
     console.error("Error updating submission:", err);
-    return cors(500, { error: "Failed to update submission" });
+    return json(500, { error: "Failed to update submission" });
   }
 }

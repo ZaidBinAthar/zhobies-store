@@ -9,7 +9,7 @@ async function ensureDb() {
   }
 }
 
-function cors(status: number, body: unknown, extraHeaders: Record<string, string> = {}): Response {
+function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
@@ -17,7 +17,6 @@ function cors(status: number, body: unknown, extraHeaders: Record<string, string
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
-      ...extraHeaders,
     },
   });
 }
@@ -28,33 +27,46 @@ function validateEmail(email: string): boolean {
 
 export default async function contact(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
-    return cors(204, null);
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
   }
 
   if (req.method !== "POST") {
-    return cors(405, { error: "Method not allowed" });
+    return json(405, { error: "Method not allowed" });
   }
 
   try {
     await ensureDb();
 
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return json(400, { error: "Invalid JSON body" });
+    }
+
     const { name, email, phone, projectType, message } = body;
 
     if (!name || !email || !projectType || !message) {
-      return cors(400, { error: "Missing required fields: name, email, projectType, message" });
+      return json(400, { error: "Missing required fields: name, email, projectType, message" });
     }
 
     if (!validateEmail(email)) {
-      return cors(400, { error: "Invalid email address" });
+      return json(400, { error: "Invalid email address" });
     }
 
     if (name.length > 255) {
-      return cors(400, { error: "Name must be 255 characters or less" });
+      return json(400, { error: "Name must be 255 characters or less" });
     }
 
     if (projectType.length > 100) {
-      return cors(400, { error: "Project type must be 100 characters or less" });
+      return json(400, { error: "Project type must be 100 characters or less" });
     }
 
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
@@ -68,7 +80,7 @@ export default async function contact(req: Request): Promise<Response> {
 
     const row = result[0];
 
-    return cors(201, {
+    return json(201, {
       success: true,
       message: "Your project request has been submitted successfully. I will get back to you soon!",
       data: {
@@ -81,7 +93,7 @@ export default async function contact(req: Request): Promise<Response> {
     });
   } catch (err) {
     console.error("Contact submission error:", err);
-    return cors(500, {
+    return json(500, {
       error: "Failed to submit your request. Please try again or contact me directly via email.",
     });
   }

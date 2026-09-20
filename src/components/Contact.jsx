@@ -81,7 +81,7 @@ export default function Contact() {
     {
       icon: Mail,
       label: 'Email Me',
-      href: 'mailto:zaid.athar.2009@gmail.com',
+      href: 'mailto:zaidiprox@gmail.com',
       color: 'hover:text-red-400',
     },
     {
@@ -250,13 +250,14 @@ export default function Contact() {
             </div>
 
             <div className="glass rounded-2xl p-7 border border-white/[0.04]">
-              <h3 className="text-white font-semibold mb-3">Email Addresses</h3>
-              <div className="flex flex-col gap-2 text-sm text-neutral-500">
-                <a href="mailto:zaid.athar.2009@gmail.com" className="hover:text-primary transition-colors">
-                  zaid.athar.2009@gmail.com
-                </a>
-                <a href="mailto:zaidiprox@gmail.com" className="hover:text-primary transition-colors">
-                  zaidiprox@gmail.com
+              <h3 className="text-white font-semibold mb-3">Email Address</h3>
+              <div className="flex flex-col gap-2">
+                <a
+                  href="mailto:zaidiprox@gmail.com?subject=Project%20Inquiry"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] hover:border-primary/20 text-neutral-400 hover:text-primary transition-all text-sm group"
+                >
+                  <Mail size={14} className="group-hover:scale-110 transition-transform shrink-0" />
+                  <span>zaidiprox@gmail.com</span>
                 </a>
               </div>
             </div>

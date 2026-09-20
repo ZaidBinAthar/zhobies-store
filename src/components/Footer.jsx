@@ -100,9 +100,12 @@ export default function Footer() {
           <p className="text-neutral-600 text-sm">
             &copy; 2026 Zaid Bin Ather. All rights reserved.
           </p>
-          <p className="text-neutral-600 text-sm flex items-center gap-1">
-            Built with <Heart size={12} className="text-primary" /> by Zaidipro
-          </p>
+          <div className="flex items-center gap-4">
+            <a href="#admin" className="text-neutral-700 hover:text-neutral-500 text-xs transition-colors">Admin</a>
+            <p className="text-neutral-600 text-sm flex items-center gap-1">
+              Built with <Heart size={12} className="text-primary" /> by Zaidipro
+            </p>
+          </div>
         </div>
       </div>
     </footer>

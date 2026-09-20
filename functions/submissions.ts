@@ -9,7 +9,7 @@ async function ensureDb() {
   }
 }
 
-function cors(status: number, body: unknown): Response {
+function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
@@ -23,11 +23,18 @@ function cors(status: number, body: unknown): Response {
 
 export default async function submissions(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
-    return cors(204, null);
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
   }
 
   if (req.method !== "GET") {
-    return cors(405, { error: "Method not allowed" });
+    return json(405, { error: "Method not allowed" });
   }
 
   try {
@@ -59,7 +66,7 @@ export default async function submissions(req: Request): Promise<Response> {
     const countResult = await sql`SELECT COUNT(*) as total FROM contact_submissions`;
     const total = parseInt(countResult[0].total as string, 10);
 
-    return cors(200, {
+    return json(200, {
       success: true,
       data: rows.map((r) => ({
         id: r.id,
@@ -75,6 +82,6 @@ export default async function submissions(req: Request): Promise<Response> {
     });
   } catch (err) {
     console.error("Error fetching submissions:", err);
-    return cors(500, { error: "Failed to fetch submissions" });
+    return json(500, { error: "Failed to fetch submissions" });
   }
 }
