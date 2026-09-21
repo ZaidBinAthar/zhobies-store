@@ -13,6 +13,7 @@ const projectTypes = [
   'School Management System',
   'Inventory System',
   'Custom Web Application',
+  'Personal Info Web Applicationw',
   'Other',
 ]
 
@@ -107,11 +108,10 @@ export default function Contact() {
     },
   ]
 
-  const inputClasses = `w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 ${
-    isDark
-      ? 'bg-white/5 border border-white/10 text-white placeholder-neutral-600'
-      : 'bg-black/5 border border-black/10 text-neutral-900 placeholder-neutral-400'
-  }`
+  const inputClasses = `w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 ${isDark
+    ? 'bg-white/5 border border-white/10 text-white placeholder-neutral-600'
+    : 'bg-black/5 border border-black/10 text-neutral-900 placeholder-neutral-400'
+    }`
 
   return (
     <section id="contact" className="py-20 md:py-24 relative">
@@ -243,11 +243,10 @@ export default function Contact() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
-                      isDark
-                        ? 'bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] hover:border-primary/20 text-neutral-400'
-                        : 'bg-black/[0.03] hover:bg-black/[0.06] border border-black/[0.04] hover:border-primary/20 text-neutral-600'
-                    } ${link.hoverColor}`}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isDark
+                      ? 'bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] hover:border-primary/20 text-neutral-400'
+                      : 'bg-black/[0.03] hover:bg-black/[0.06] border border-black/[0.04] hover:border-primary/20 text-neutral-600'
+                      } ${link.hoverColor}`}
                   >
                     <span className="group-hover:scale-110 transition-transform">
                       {typeof link.icon === 'function' && link.icon.prototype?.isReactComponent ? (
@@ -266,11 +265,10 @@ export default function Contact() {
               <h3 className={`font-semibold mb-3 ${isDark ? 'text-white' : 'text-neutral-900'}`}>Email Address</h3>
               <a
                 href="mailto:zaidiprox@gmail.com?subject=Project%20Inquiry"
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-sm group ${
-                  isDark
-                    ? 'bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] hover:border-primary/20 text-neutral-400'
-                    : 'bg-black/[0.03] hover:bg-black/[0.06] border border-black/[0.04] hover:border-primary/20 text-neutral-600'
-                } hover:text-primary`}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-sm group ${isDark
+                  ? 'bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] hover:border-primary/20 text-neutral-400'
+                  : 'bg-black/[0.03] hover:bg-black/[0.06] border border-black/[0.04] hover:border-primary/20 text-neutral-600'
+                  } hover:text-primary`}
               >
                 <Mail size={14} className="group-hover:scale-110 transition-transform shrink-0" />
                 <span>zaidiprox@gmail.com</span>

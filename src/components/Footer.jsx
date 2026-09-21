@@ -56,9 +56,9 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-sm">
-                Z
+                BD
               </div>
-              <span className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-neutral-900'}`}>Zaidipro</span>
+              <span className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-neutral-900'}`}>BinAthar Developers</span>
             </div>
             <p className={`text-sm leading-relaxed ${isDark ? 'text-neutral-500' : 'text-neutral-500'}`}>
               Building ideas into software.
@@ -113,7 +113,7 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             <a href="#admin" className={`text-xs transition-colors ${isDark ? 'text-neutral-700 hover:text-neutral-500' : 'text-neutral-400 hover:text-neutral-600'}`}>Admin</a>
             <p className={`text-sm flex items-center gap-1 ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
-              Built with <Heart size={12} className="text-primary" /> by Zaidipro
+              Built with <Heart size={12} className="text-primary" /> by BinAthar Developers
             </p>
           </div>
         </div>

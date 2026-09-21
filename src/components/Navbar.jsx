@@ -45,11 +45,11 @@ export default function Navbar() {
           onClick={(e) => handleClick(e, '#home')}
           className="flex items-center gap-2 group"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-sm transition-transform group-hover:scale-110">
-            Z
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-sm transition-transform group-hover:scale-110">
+            BD
           </div>
           <span className={`font-semibold text-lg tracking-tight ${isDark ? 'text-white' : 'text-neutral-900'}`}>
-            Zaidipro
+            BinAthar Developers
           </span>
         </a>
 
