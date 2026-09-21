@@ -22,17 +22,17 @@ export default function About() {
   const [ref, isVisible] = useScrollReveal(0.1)
 
   return (
-    <section id="about" className="py-28 relative">
+    <section id="about" className="py-20 md:py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent" />
       <div ref={ref} className={`max-w-7xl mx-auto px-6 relative reveal ${isVisible ? 'visible' : ''}`}>
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
-            <p className="text-primary font-mono text-sm mb-4 tracking-wider uppercase">About Me</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+            <p className="text-primary font-mono text-sm mb-3 tracking-wider uppercase">About Me</p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
               Building Software That Solves{' '}
               <span className="gradient-text">Real Problems</span>
             </h2>
-            <p className="text-neutral-400 text-lg leading-relaxed mb-6">
+            <p className="text-neutral-400 text-lg leading-relaxed mb-5">
               I focus on building practical software and business solutions that help organizations
               manage their operations efficiently. Rather than creating generic templates, I build
               complete systems tailored to real-world workflows.

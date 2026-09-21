@@ -18,11 +18,11 @@ export default function WhyWorkWithMe() {
   const [ref, isVisible] = useScrollReveal(0.1)
 
   return (
-    <section className="py-28 relative">
+    <section className="py-20 md:py-24 relative">
       <div ref={ref} className={`max-w-7xl mx-auto px-6 reveal ${isVisible ? 'visible' : ''}`}>
-        <div className="text-center mb-16">
-          <p className="text-primary font-mono text-sm mb-4 tracking-wider uppercase">Why Me</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+        <div className="text-center mb-12">
+          <p className="text-primary font-mono text-sm mb-3 tracking-wider uppercase">Why Me</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3">
             Why Work <span className="gradient-text">With Me</span>
           </h2>
         </div>
@@ -31,13 +31,13 @@ export default function WhyWorkWithMe() {
           {reasons.map((reason, i) => (
             <div
               key={reason.title}
-              className="glass glass-hover rounded-xl p-6 group cursor-default transition-all duration-300 hover:-translate-y-1"
+              className="glass glass-hover rounded-xl p-5 group cursor-default transition-all duration-300 hover:-translate-y-1"
               style={{ animationDelay: `${i * 60}ms` }}
             >
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
                 <reason.icon size={20} className="text-primary" />
               </div>
-              <h3 className="text-white font-semibold mb-2 text-sm">{reason.title}</h3>
+              <h3 className="text-white font-semibold mb-1.5 text-sm">{reason.title}</h3>
               <p className="text-neutral-500 text-xs leading-relaxed">{reason.description}</p>
             </div>
           ))}

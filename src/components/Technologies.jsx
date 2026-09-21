@@ -21,11 +21,11 @@ export default function Technologies() {
   const [ref, isVisible] = useScrollReveal(0.1)
 
   return (
-    <section id="tech" className="py-28 relative">
+    <section id="tech" className="py-20 md:py-24 relative">
       <div ref={ref} className={`max-w-7xl mx-auto px-6 reveal ${isVisible ? 'visible' : ''}`}>
-        <div className="text-center mb-16">
-          <p className="text-primary font-mono text-sm mb-4 tracking-wider uppercase">Technologies</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+        <div className="text-center mb-12">
+          <p className="text-primary font-mono text-sm mb-3 tracking-wider uppercase">Technologies</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3">
             Tools I <span className="gradient-text">Work With</span>
           </h2>
           <p className="text-neutral-500 max-w-lg mx-auto">

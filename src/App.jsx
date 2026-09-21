@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { ThemeProvider, useTheme } from './hooks/useTheme'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -30,7 +31,8 @@ function Portfolio() {
   )
 }
 
-export default function App() {
+function AppContent() {
+  const { theme } = useTheme()
   const [page, setPage] = useState(window.location.hash.slice(1) || 'home')
 
   useEffect(() => {
@@ -43,15 +45,23 @@ export default function App() {
 
   if (page === 'admin') {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-neutral-200 antialiased">
+      <div className={`min-h-screen antialiased ${theme === 'dark' ? 'bg-[#0a0a0a] text-neutral-200' : 'bg-[#fafafa] text-neutral-800'}`}>
         <Admin />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-neutral-200 antialiased">
+    <div className={`min-h-screen antialiased ${theme === 'dark' ? 'bg-[#0a0a0a] text-neutral-200' : 'bg-[#fafafa] text-neutral-800'}`}>
       <Portfolio />
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   )
 }

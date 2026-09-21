@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
+import { useTheme } from '../hooks/useTheme'
 import { Send, Mail, MessageCircle, CheckCircle, Loader2 } from 'lucide-react'
 import { API_CONFIG } from '../config/api'
 
@@ -28,6 +29,8 @@ const InstagramIcon = () => (
 )
 
 export default function Contact() {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [ref, isVisible] = useScrollReveal(0.1)
   const [formData, setFormData] = useState({
     name: '',
@@ -36,7 +39,7 @@ export default function Contact() {
     projectType: '',
     message: '',
   })
-  const [status, setStatus] = useState('idle') // idle | submitting | success | error
+  const [status, setStatus] = useState('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
   const handleChange = (e) => {
@@ -82,124 +85,130 @@ export default function Contact() {
       icon: Mail,
       label: 'Email Me',
       href: 'mailto:zaidiprox@gmail.com',
-      color: 'hover:text-red-400',
+      hoverColor: 'hover:text-red-400',
     },
     {
       icon: MessageCircle,
       label: 'WhatsApp',
       href: `https://wa.me/${WHATSAPP_NUMBER}`,
-      color: 'hover:text-green-400',
+      hoverColor: 'hover:text-green-400',
     },
     {
       icon: GithubIcon,
       label: 'GitHub',
       href: 'https://github.com/ZaidBinAthar',
-      color: 'hover:text-white',
+      hoverColor: isDark ? 'hover:text-white' : 'hover:text-neutral-900',
     },
     {
       icon: InstagramIcon,
       label: 'Instagram',
       href: 'https://www.instagram.com/zaidiprox/',
-      color: 'hover:text-pink-400',
+      hoverColor: 'hover:text-pink-400',
     },
   ]
 
+  const inputClasses = `w-full px-4 py-3 rounded-xl text-sm transition-all focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 ${
+    isDark
+      ? 'bg-white/5 border border-white/10 text-white placeholder-neutral-600'
+      : 'bg-black/5 border border-black/10 text-neutral-900 placeholder-neutral-400'
+  }`
+
   return (
-    <section id="contact" className="py-28 relative">
+    <section id="contact" className="py-20 md:py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.03] to-transparent" />
       <div ref={ref} className={`max-w-7xl mx-auto px-6 relative reveal ${isVisible ? 'visible' : ''}`}>
-        <div className="text-center mb-16">
-          <p className="text-primary font-mono text-sm mb-4 tracking-wider uppercase">Contact</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+        <div className="text-center mb-12">
+          <p className="text-primary font-mono text-sm mb-3 tracking-wider uppercase">Contact</p>
+          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 ${isDark ? 'text-white' : 'text-neutral-900'}`}>
             Have a Project in <span className="gradient-text">Mind?</span>
           </h2>
-          <p className="text-neutral-500 max-w-2xl mx-auto">
+          <p className={`max-w-2xl mx-auto ${isDark ? 'text-neutral-500' : 'text-neutral-500'}`}>
             Whether you need a business website, accounting system, school software, inventory system,
             or a completely custom web application, tell me what you need and let's discuss it.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-5 gap-10 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-5 gap-8 max-w-6xl mx-auto">
           <div className="lg:col-span-3">
-            <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 border border-white/[0.04]">
+            <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 sm:p-7 border border-white/[0.04]">
               {status === 'success' && (
-                <div className="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center gap-3">
+                <div className="mb-5 p-4 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center gap-3">
                   <CheckCircle size={20} className="text-green-400 shrink-0" />
                   <p className="text-green-300 text-sm">Your project request has been submitted successfully! I will get back to you soon.</p>
                 </div>
               )}
 
               {status === 'error' && (
-                <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
+                <div className="mb-5 p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
                   <span className="text-red-400 text-sm">{errorMsg}</span>
                 </div>
               )}
 
-              <div className="grid sm:grid-cols-2 gap-5 mb-5">
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm text-neutral-400 mb-2 font-medium">Name</label>
+                  <label className={`block text-sm mb-1.5 font-medium ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>Name</label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-neutral-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+                    className={inputClasses}
                     placeholder="Your name"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-neutral-400 mb-2 font-medium">Email</label>
+                  <label className={`block text-sm mb-1.5 font-medium ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>Email</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-neutral-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+                    className={inputClasses}
                     placeholder="your@email.com"
                   />
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-5 mb-5">
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm text-neutral-400 mb-2 font-medium">Phone / WhatsApp</label>
+                  <label className={`block text-sm mb-1.5 font-medium ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>Phone / WhatsApp</label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-neutral-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
+                    className={inputClasses}
                     placeholder="+92 xxx xxxxxxx"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-neutral-400 mb-2 font-medium">Project Type</label>
+                  <label className={`block text-sm mb-1.5 font-medium ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>Project Type</label>
                   <select
                     name="projectType"
                     value={formData.projectType}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all appearance-none cursor-pointer"
+                    className={`${inputClasses} appearance-none cursor-pointer`}
                   >
-                    <option value="" className="bg-surface">Select project type</option>
+                    <option value="" className={isDark ? 'bg-surface' : 'bg-white'}>Select project type</option>
                     {projectTypes.map((type) => (
-                      <option key={type} value={type} className="bg-surface">{type}</option>
+                      <option key={type} value={type} className={isDark ? 'bg-surface' : 'bg-white'}>{type}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              <div className="mb-6">
-                <label className="block text-sm text-neutral-400 mb-2 font-medium">Message</label>
+              <div className="mb-5">
+                <label className={`block text-sm mb-1.5 font-medium ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>Message</label>
                 <textarea
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  rows={5}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-neutral-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all resize-none"
+                  rows={4}
+                  className={`${inputClasses} resize-none`}
                   placeholder="Tell me about your project..."
                 />
               </div>
@@ -207,7 +216,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="w-full py-4 bg-gradient-to-r from-primary to-accent text-white font-medium rounded-xl hover:shadow-xl hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                className="btn-primary w-full !py-3.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
               >
                 {status === 'submitting' ? (
                   <>
@@ -224,17 +233,21 @@ export default function Contact() {
             </form>
           </div>
 
-          <div className="lg:col-span-2 flex flex-col gap-5">
-            <div className="glass rounded-2xl p-7 border border-white/[0.04]">
-              <h3 className="text-white font-semibold mb-5">Direct Contact</h3>
-              <div className="flex flex-col gap-3">
+          <div className="lg:col-span-2 flex flex-col gap-4">
+            <div className="glass rounded-2xl p-6 border border-white/[0.04]">
+              <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-neutral-900'}`}>Direct Contact</h3>
+              <div className="flex flex-col gap-2.5">
                 {contactLinks.map((link) => (
                   <a
                     key={link.label}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] hover:border-primary/20 text-neutral-400 ${link.color} transition-all duration-300 group`}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
+                      isDark
+                        ? 'bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] hover:border-primary/20 text-neutral-400'
+                        : 'bg-black/[0.03] hover:bg-black/[0.06] border border-black/[0.04] hover:border-primary/20 text-neutral-600'
+                    } ${link.hoverColor}`}
                   >
                     <span className="group-hover:scale-110 transition-transform">
                       {typeof link.icon === 'function' && link.icon.prototype?.isReactComponent ? (
@@ -249,17 +262,19 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="glass rounded-2xl p-7 border border-white/[0.04]">
-              <h3 className="text-white font-semibold mb-3">Email Address</h3>
-              <div className="flex flex-col gap-2">
-                <a
-                  href="mailto:zaidiprox@gmail.com?subject=Project%20Inquiry"
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] hover:border-primary/20 text-neutral-400 hover:text-primary transition-all text-sm group"
-                >
-                  <Mail size={14} className="group-hover:scale-110 transition-transform shrink-0" />
-                  <span>zaidiprox@gmail.com</span>
-                </a>
-              </div>
+            <div className="glass rounded-2xl p-6 border border-white/[0.04]">
+              <h3 className={`font-semibold mb-3 ${isDark ? 'text-white' : 'text-neutral-900'}`}>Email Address</h3>
+              <a
+                href="mailto:zaidiprox@gmail.com?subject=Project%20Inquiry"
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-sm group ${
+                  isDark
+                    ? 'bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.04] hover:border-primary/20 text-neutral-400'
+                    : 'bg-black/[0.03] hover:bg-black/[0.06] border border-black/[0.04] hover:border-primary/20 text-neutral-600'
+                } hover:text-primary`}
+              >
+                <Mail size={14} className="group-hover:scale-110 transition-transform shrink-0" />
+                <span>zaidiprox@gmail.com</span>
+              </a>
             </div>
           </div>
         </div>

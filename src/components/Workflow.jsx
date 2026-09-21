@@ -27,12 +27,12 @@ export default function Workflow() {
   const [ref, isVisible] = useScrollReveal(0.1)
 
   return (
-    <section className="py-28 relative">
+    <section className="py-20 md:py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent" />
       <div ref={ref} className={`max-w-7xl mx-auto px-6 relative reveal ${isVisible ? 'visible' : ''}`}>
-        <div className="text-center mb-16">
-          <p className="text-primary font-mono text-sm mb-4 tracking-wider uppercase">Process</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+        <div className="text-center mb-12">
+          <p className="text-primary font-mono text-sm mb-3 tracking-wider uppercase">Process</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3">
             How We <span className="gradient-text">Work Together</span>
           </h2>
           <p className="text-neutral-500 max-w-lg mx-auto">
@@ -40,17 +40,17 @@ export default function Workflow() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           {steps.map((step, i) => (
             <div key={step.number} className="relative">
               {i < steps.length - 1 && (
                 <div className="hidden lg:block absolute top-10 left-[calc(50%+40px)] w-[calc(100%-40px)] h-px bg-gradient-to-r from-primary/30 to-primary/10" />
               )}
-              <div className="glass rounded-2xl p-7 text-center group hover:bg-white/[0.06] transition-all duration-300 hover:-translate-y-1 border border-white/[0.04] hover:border-primary/20 relative">
-                <div className="text-4xl font-bold gradient-text mb-4 font-mono opacity-60 group-hover:opacity-100 transition-opacity">
+              <div className="glass rounded-2xl p-6 text-center group hover:bg-white/[0.06] transition-all duration-300 hover:-translate-y-1 border border-white/[0.04] hover:border-primary/20 relative">
+                <div className="text-4xl font-bold gradient-text mb-3 font-mono opacity-60 group-hover:opacity-100 transition-opacity">
                   {step.number}
                 </div>
-                <h3 className="text-white font-semibold text-lg mb-3">{step.title}</h3>
+                <h3 className="text-white font-semibold text-lg mb-2">{step.title}</h3>
                 <p className="text-neutral-500 text-sm leading-relaxed">{step.description}</p>
               </div>
             </div>

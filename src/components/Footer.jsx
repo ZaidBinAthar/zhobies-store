@@ -1,4 +1,5 @@
 import { Heart } from 'lucide-react'
+import { useTheme } from '../hooks/useTheme'
 
 const footerLinks = [
   { name: 'About', href: '#about' },
@@ -39,6 +40,9 @@ const socialLinks = [
 ]
 
 export default function Footer() {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
   const handleClick = (e, href) => {
     e.preventDefault()
     const el = document.querySelector(href)
@@ -46,30 +50,32 @@ export default function Footer() {
   }
 
   return (
-    <footer className="border-t border-white/5 bg-[#0a0a0a]">
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-3 gap-12 mb-12">
+    <footer className={`border-t ${isDark ? 'border-white/5 bg-[#0a0a0a]' : 'border-black/5 bg-[#fafafa]'}`}>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-sm">
                 Z
               </div>
-              <span className="text-white font-semibold text-lg">Zaidipro</span>
+              <span className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-neutral-900'}`}>Zaidipro</span>
             </div>
-            <p className="text-neutral-500 text-sm leading-relaxed">
+            <p className={`text-sm leading-relaxed ${isDark ? 'text-neutral-500' : 'text-neutral-500'}`}>
               Building ideas into software.
             </p>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+            <h4 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-neutral-900'}`}>Quick Links</h4>
             <div className="flex flex-col gap-2">
               {footerLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
                   onClick={(e) => handleClick(e, link.href)}
-                  className="text-neutral-500 hover:text-white text-sm transition-colors w-fit"
+                  className={`text-sm transition-colors w-fit ${
+                    isDark ? 'text-neutral-500 hover:text-white' : 'text-neutral-500 hover:text-neutral-900'
+                  }`}
                 >
                   {link.name}
                 </a>
@@ -78,7 +84,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Connect</h4>
+            <h4 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-neutral-900'}`}>Connect</h4>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
                 <a
@@ -87,7 +93,11 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-10 h-10 rounded-xl glass flex items-center justify-center text-neutral-500 hover:text-white hover:bg-white/10 transition-all duration-300"
+                  className={`w-10 h-10 rounded-xl glass flex items-center justify-center transition-all duration-300 ${
+                    isDark
+                      ? 'text-neutral-500 hover:text-white hover:bg-white/10'
+                      : 'text-neutral-500 hover:text-neutral-900 hover:bg-black/5'
+                  }`}
                 >
                   <social.icon />
                 </a>
@@ -96,13 +106,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-neutral-600 text-sm">
+        <div className={`border-t pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 ${isDark ? 'border-white/5' : 'border-black/5'}`}>
+          <p className={`text-sm ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
             &copy; 2026 Zaid Bin Ather. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <a href="#admin" className="text-neutral-700 hover:text-neutral-500 text-xs transition-colors">Admin</a>
-            <p className="text-neutral-600 text-sm flex items-center gap-1">
+            <a href="#admin" className={`text-xs transition-colors ${isDark ? 'text-neutral-700 hover:text-neutral-500' : 'text-neutral-400 hover:text-neutral-600'}`}>Admin</a>
+            <p className={`text-sm flex items-center gap-1 ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
               Built with <Heart size={12} className="text-primary" /> by Zaidipro
             </p>
           </div>
