@@ -1,99 +1,152 @@
 import { useScrollReveal } from '../hooks/useScrollReveal'
-import { ExternalLink, Lock } from 'lucide-react'
 
-const projects = [
+const sizeGuide = [
+  { size: 'S', chest: '36"', waist: '30"', length: '28"' },
+  { size: 'M', chest: '38"', waist: '32"', length: '29"' },
+  { size: 'L', chest: '40"', waist: '34"', length: '30"' },
+  { size: 'XL', chest: '42"', waist: '36"', length: '31"' },
+  { size: 'XXL', chest: '44"', waist: '38"', length: '32"' },
+]
+
+const testimonials = [
   {
-    title: 'Zunex School Accounting',
-    description: 'A modern school accounting and management system designed to manage students, fees, income, expenses, accounts and reports.',
-    tech: ['React', 'Vite', 'Express.js', 'PostgreSQL'],
-    status: 'Private / Demo Project',
-    url: 'https://zunex.vercel.app',
-    image: '/projects/zunex.png',
+    name: 'Ahmed Raza',
+    city: 'Faisalabad',
+    text: 'The formal suit I ordered was absolutely perfect. Premium stitching and beautiful fabric. Will definitely order again!',
+    rating: 5,
   },
   {
-    title: 'BinAthar Motors',
-    description: 'A modern motorcycle business platform designed for buying, selling and managing bike inventory.',
-    tech: ['React', 'Node.js', 'Express.js', 'PostgreSQL'],
-    status: 'Private / Demo Project',
-    url: 'https://binathar-motors.vercel.app',
-    image: '/projects/binathar-motors.png',
+    name: 'Bilal Khan',
+    city: 'Lahore',
+    text: 'Got the traditional kurta for Eid. The embroidery work is exceptional. Got so many compliments on the quality.',
+    rating: 5,
   },
   {
-    title: 'Business Management Systems',
-    description: 'Custom business software concepts for organizations that need centralized management, accounting, inventory and reporting.',
-    tech: ['React', 'Node.js', 'SQL'],
-    status: 'Private / Demo Project',
-    url: 'https://dice5566.vercel.app',
-    image: '/projects/business-mgmt.png',
+    name: 'Usman Malik',
+    city: 'Islamabad',
+    text: 'Fast delivery and beautiful packaging. The casual hoodie set is exactly as shown. Very satisfied with Zohaibies Wear!',
+    rating: 5,
   },
 ]
 
 export default function Projects() {
-  const [ref, isVisible] = useScrollReveal(0.1)
+  const [ref, isVisible] = useScrollReveal(0.05)
 
   return (
-    <section id="projects" className="py-20 md:py-24 relative">
+    <section id="about" className="py-20 md:py-28 relative">
       <div ref={ref} className={`max-w-7xl mx-auto px-6 reveal ${isVisible ? 'visible' : ''}`}>
-        <div className="text-center mb-12">
-          <p className="text-primary font-mono text-sm mb-3 tracking-wider uppercase">Projects</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3">
-            Featured <span className="gradient-text">Work</span>
-          </h2>
-          <p className="text-neutral-500 max-w-lg mx-auto">
-            A selection of projects that demonstrate my ability to build complete, functional software systems.
-          </p>
+
+        {/* About Brand */}
+        <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">
+          <div>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="h-px w-10 bg-[#b8860b]" />
+              <span className="text-[#b8860b] text-xs tracking-[0.3em] uppercase font-medium">Our Story</span>
+            </div>
+            <h2 className="font-serif text-4xl sm:text-5xl font-bold text-white mb-5 leading-tight">
+              Crafting Style With{' '}
+              <span className="gradient-text">Passion</span>
+            </h2>
+            <p className="text-neutral-400 text-lg leading-relaxed mb-5">
+              Zohaibies Wear was born from a passion for premium quality clothing
+              at accessible prices. We believe every man deserves to look his best —
+              whether at the office, a family gathering, or a festive celebration.
+            </p>
+            <p className="text-neutral-500 leading-relaxed mb-8">
+              Every piece in our collection is handpicked for quality, stitched with
+              care by our master tailors, and delivered with love. From Faisalabad to
+              across Pakistan, we take pride in making you look exceptional.
+            </p>
+            <div className="grid grid-cols-3 gap-6">
+              {[
+                { value: '3+', label: 'Years of Craft' },
+                { value: '500+', label: 'Satisfied Clients' },
+                { value: '50+', label: 'Unique Designs' },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center border-t border-[#b8860b]/20 pt-4">
+                  <div className="font-serif text-2xl font-bold text-[#d4a017]">{stat.value}</div>
+                  <div className="text-neutral-500 text-xs tracking-wide mt-0.5">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Size Guide */}
+          <div className="glass border border-[#b8860b]/15 p-6">
+            <h3 className="font-serif text-xl font-semibold text-white mb-1">Size Guide</h3>
+            <p className="text-neutral-500 text-sm mb-5">Find your perfect fit with our size chart</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[#b8860b]/20">
+                    {['Size', 'Chest', 'Waist', 'Length'].map((h) => (
+                      <th key={h} className="pb-3 text-left text-[#b8860b] text-xs tracking-wider uppercase font-medium">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sizeGuide.map((row, i) => (
+                    <tr
+                      key={row.size}
+                      className={`border-b border-[#b8860b]/10 hover:bg-[#b8860b]/5 transition-colors ${i % 2 === 0 ? '' : 'bg-[#b8860b]/[0.02]'}`}
+                    >
+                      <td className="py-3 font-semibold text-[#d4a017] font-serif">{row.size}</td>
+                      <td className="py-3 text-neutral-400">{row.chest}</td>
+                      <td className="py-3 text-neutral-400">{row.waist}</td>
+                      <td className="py-3 text-neutral-400">{row.length}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-neutral-600 text-xs mt-4">
+              * Custom sizing available on request. Contact us via WhatsApp for measurements.
+            </p>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
-            <a
-              key={project.title}
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass rounded-2xl overflow-hidden group hover:bg-white/[0.06] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 border border-white/[0.04] hover:border-primary/20 block"
-            >
-              <div className="h-48 bg-gradient-to-br from-primary/10 to-accent/10 relative overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-4 right-4">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm text-xs text-neutral-400">
-                    <Lock size={12} />
-                    {project.status}
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-surface/80 via-transparent to-transparent" />
-              </div>
+        {/* Testimonials */}
+        <div>
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#b8860b]" />
+              <span className="text-[#b8860b] text-xs tracking-[0.3em] uppercase font-medium">Customer Reviews</span>
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#b8860b]" />
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white">
+              What Our <span className="gradient-text">Customers Say</span>
+            </h2>
+          </div>
 
-              <div className="p-5">
-                <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-primary-light transition-colors">
-                  {project.title}
-                </h3>
-                <p className="text-neutral-500 text-sm leading-relaxed mb-4">
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="px-2.5 py-1 rounded-md bg-primary/10 text-primary-light text-xs font-medium"
-                    >
-                      {t}
-                    </span>
+          <div className="grid md:grid-cols-3 gap-5">
+            {testimonials.map((t, i) => (
+              <div
+                key={t.name}
+                className="glass border border-[#b8860b]/10 p-6 hover:border-[#b8860b]/25 transition-all duration-300 hover:-translate-y-1"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="flex mb-3">
+                  {[...Array(t.rating)].map((_, i) => (
+                    <span key={i} className="text-[#d4a017] text-sm">★</span>
                   ))}
                 </div>
-
-                <div className="flex items-center gap-2 text-sm text-neutral-500 group-hover:text-primary transition-colors">
-                  <ExternalLink size={14} />
-                  <span>View Live Project</span>
+                <p className="text-neutral-400 text-sm leading-relaxed italic mb-4">
+                  "{t.text}"
+                </p>
+                <div className="border-t border-[#b8860b]/10 pt-4 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#b8860b] to-[#8b6508] flex items-center justify-center text-white text-xs font-bold font-serif">
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <div className="text-white text-sm font-semibold">{t.name}</div>
+                    <div className="text-neutral-500 text-xs">{t.city}</div>
+                  </div>
                 </div>
               </div>
-            </a>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

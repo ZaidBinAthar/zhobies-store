@@ -2,28 +2,28 @@ import { useState, useEffect } from 'react'
 import { ThemeProvider, useTheme } from './hooks/useTheme'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import About from './components/About'
-import Technologies from './components/Technologies'
-import Services from './components/Services'
-import Projects from './components/Projects'
-import Workflow from './components/Workflow'
-import WhyWorkWithMe from './components/WhyWorkWithMe'
+import Collections from './components/About'        // Collections section
+import Products from './components/Services'        // Featured Products
+import About from './components/Projects'           // About Brand + Testimonials
+import HowToOrder from './components/Workflow'      // How to Order
+import WhyChooseUs from './components/WhyWorkWithMe' // Why Choose Zohaibies
+import Fabrics from './components/Technologies'     // Fabric Range
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import FloatingContact from './components/FloatingContact'
 import Admin from './pages/Admin'
 
-function Portfolio() {
+function Store() {
   return (
     <>
       <Navbar />
       <Hero />
+      <Collections />
+      <Products />
       <About />
-      <Technologies />
-      <Services />
-      <Projects />
-      <Workflow />
-      <WhyWorkWithMe />
+      <HowToOrder />
+      <WhyChooseUs />
+      <Fabrics />
       <Contact />
       <Footer />
       <FloatingContact />
@@ -45,15 +45,15 @@ function AppContent() {
 
   if (page === 'admin') {
     return (
-      <div className={`min-h-screen antialiased ${theme === 'dark' ? 'bg-[#0a0a0a] text-neutral-200' : 'bg-[#fafafa] text-neutral-800'}`}>
+      <div className={`min-h-screen antialiased ${theme === 'dark' ? 'bg-[#0d0b09] text-neutral-200' : 'bg-[#faf8f5] text-neutral-800'}`}>
         <Admin />
       </div>
     )
   }
 
   return (
-    <div className={`min-h-screen antialiased ${theme === 'dark' ? 'bg-[#0a0a0a] text-neutral-200' : 'bg-[#fafafa] text-neutral-800'}`}>
-      <Portfolio />
+    <div className={`min-h-screen antialiased ${theme === 'dark' ? 'bg-[#0d0b09] text-[#e8ddd0]' : 'bg-[#faf8f5] text-neutral-900'}`}>
+      <Store />
     </div>
   )
 }

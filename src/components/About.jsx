@@ -1,65 +1,116 @@
 import { useScrollReveal } from '../hooks/useScrollReveal'
-import {
-  Globe, BarChart3, Calculator, GraduationCap,
-  Package, ShoppingCart, LayoutDashboard, Database,
-  Building2, AppWindow
-} from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
-const capabilities = [
-  { icon: Globe, label: 'Business Websites' },
-  { icon: BarChart3, label: 'Management Systems' },
-  { icon: Calculator, label: 'Accounting Software' },
-  { icon: GraduationCap, label: 'School Management' },
-  { icon: Package, label: 'Inventory Systems' },
-  { icon: ShoppingCart, label: 'Sales & Purchase' },
-  { icon: LayoutDashboard, label: 'Custom Dashboards' },
-  { icon: Database, label: 'Database Applications' },
-  { icon: Building2, label: 'Business Portals' },
-  { icon: AppWindow, label: 'Custom Web Apps' },
+const collections = [
+  {
+    id: 'formal',
+    title: 'Formal Elegance',
+    subtitle: 'Business & Special Occasions',
+    description: 'Tailored suits, blazers and dress trousers for the modern professional. Premium wool blends and impeccable stitching.',
+    image: '/collection-formal.jpg',
+    badge: 'Bestseller',
+    items: '15+ Styles',
+  },
+  {
+    id: 'casual',
+    title: 'Casual Comfort',
+    subtitle: 'Everyday Essentials',
+    description: 'Relaxed hoodies, joggers and streetwear that combine comfort with contemporary style for daily wear.',
+    image: '/collection-casual.jpg',
+    badge: 'New Arrivals',
+    items: '20+ Styles',
+  },
+  {
+    id: 'traditional',
+    title: 'Traditional Heritage',
+    subtitle: 'Weddings & Festivals',
+    description: 'Handcrafted shalwar kameez and embroidered kurtas that celebrate Pakistani heritage with modern sensibility.',
+    image: '/collection-traditional.jpg',
+    badge: 'Exclusive',
+    items: '12+ Styles',
+  },
 ]
 
-export default function About() {
-  const [ref, isVisible] = useScrollReveal(0.1)
+export default function Collections() {
+  const [ref, isVisible] = useScrollReveal(0.05)
 
   return (
-    <section id="about" className="py-20 md:py-24 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent" />
-      <div ref={ref} className={`max-w-7xl mx-auto px-6 relative reveal ${isVisible ? 'visible' : ''}`}>
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div>
-            <p className="text-primary font-mono text-sm mb-3 tracking-wider uppercase">About Me</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
-              Building Software That Solves{' '}
-              <span className="gradient-text">Real Problems</span>
-            </h2>
-            <p className="text-neutral-400 text-lg leading-relaxed mb-5">
-              I focus on building practical software and business solutions that help organizations
-              manage their operations efficiently. Rather than creating generic templates, I build
-              complete systems tailored to real-world workflows.
-            </p>
-            <p className="text-neutral-500 leading-relaxed">
-              From school accounting systems to motorcycle business platforms, I enjoy tackling
-              complex problems that require thoughtful architecture, clean code, and database-driven
-              functionality. Every project is an opportunity to create something genuinely useful.
-            </p>
-          </div>
+    <section id="collections" className="py-20 md:py-28 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#b8860b]/[0.02] to-transparent" />
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {capabilities.map((item, i) => (
-              <div
-                key={item.label}
-                className="glass glass-hover rounded-xl p-4 flex flex-col items-center gap-3 text-center group cursor-default transition-all duration-300 hover:-translate-y-1"
-                style={{ animationDelay: `${i * 50}ms` }}
-              >
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <item.icon size={20} className="text-primary" />
-                </div>
-                <span className="text-xs text-neutral-400 group-hover:text-neutral-200 transition-colors leading-tight">
-                  {item.label}
-                </span>
-              </div>
-            ))}
+      <div ref={ref} className={`max-w-7xl mx-auto px-6 relative reveal ${isVisible ? 'visible' : ''}`}>
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#b8860b]" />
+            <span className="text-[#b8860b] text-xs tracking-[0.3em] uppercase font-medium">Our Collections</span>
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#b8860b]" />
           </div>
+          <h2 className="font-serif text-4xl sm:text-5xl font-bold text-white mb-4">
+            Curated for <span className="gradient-text">Every Occasion</span>
+          </h2>
+          <div className="gold-divider mt-4" />
+        </div>
+
+        {/* Collections Grid */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {collections.map((col, i) => (
+            <div
+              key={col.id}
+              className="group relative overflow-hidden cursor-pointer product-card"
+              style={{ animationDelay: `${i * 150}ms` }}
+              id={`collection-${col.id}`}
+            >
+              {/* Image */}
+              <div className="relative h-[480px] overflow-hidden">
+                <img
+                  src={col.image}
+                  alt={col.title}
+                  className="product-img w-full h-full object-cover object-top"
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b09] via-[#0d0b09]/30 to-transparent" />
+
+                {/* Badge */}
+                <div className="absolute top-4 left-4">
+                  <span className="px-3 py-1.5 text-[10px] tracking-[0.2em] uppercase font-semibold bg-[#b8860b] text-white">
+                    {col.badge}
+                  </span>
+                </div>
+
+                {/* Items count */}
+                <div className="absolute top-4 right-4">
+                  <span className="glass px-3 py-1.5 text-[10px] tracking-[0.15em] uppercase text-[#d4a017]">
+                    {col.items}
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <p className="text-[#b8860b] text-[10px] tracking-[0.3em] uppercase mb-1.5">
+                    {col.subtitle}
+                  </p>
+                  <h3 className="font-serif text-2xl font-bold text-white mb-2">
+                    {col.title}
+                  </h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                    {col.description}
+                  </p>
+                  <a
+                    href="#contact"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })
+                    }}
+                    className="inline-flex items-center gap-2 text-[#d4a017] text-sm tracking-wider uppercase font-medium group/link"
+                  >
+                    Shop Collection
+                    <ArrowRight size={14} className="transition-transform group-hover/link:translate-x-1" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
