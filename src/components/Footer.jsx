@@ -151,9 +151,20 @@ export default function Footer() {
           <p className={`text-xs tracking-wide ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
             &copy; 2026 Zohaibies Wear. All rights reserved.
           </p>
-          <p className={`text-xs flex items-center gap-1.5 ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
-            Made with <Heart size={11} className="text-[#b8860b] fill-[#b8860b]" /> in Faisalabad, Pakistan
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+            <span className={isDark ? 'text-neutral-500' : 'text-neutral-500'}>
+              Developed by <strong className="text-[#d4a017] font-semibold">Zaid Bin Athar</strong>
+            </span>
+            <span className="text-neutral-600">·</span>
+            <a
+              href="https://wa.me/923256232379"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#b8860b] hover:text-[#d4a017] hover:underline transition-colors"
+            >
+              +92 325 6232379
+            </a>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import { useTheme } from '../hooks/useTheme'
-import { Send, Mail, MessageCircle, CheckCircle, Loader2, MapPin } from 'lucide-react'
+import { Send, Mail, MessageCircle, CheckCircle, Loader2, MapPin, Code2 } from 'lucide-react'
 
 const InstagramIcon = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -230,7 +230,7 @@ export default function Contact() {
                   {
                     icon: MessageCircle,
                     label: 'WhatsApp',
-                    value: '+92 325 6232379',
+                    value: '+92 324 7201988',
                     href: `https://wa.me/${WHATSAPP_NUMBER}`,
                     color: 'hover:text-green-400 hover:border-green-400/30',
                   },
@@ -309,6 +309,42 @@ export default function Contact() {
                     <span className="text-[#d4a017] font-medium">{h.time}</span>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Developer Contact Card */}
+            <div className="glass border border-[#b8860b]/20 p-5 bg-[#171410]/70">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Code2 size={15} className="text-[#d4a017]" />
+                  <span className="text-[10px] tracking-[0.25em] uppercase text-[#b8860b] font-semibold">
+                    Website Developer
+                  </span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 border border-[#b8860b]/30 text-[#d4a017] rounded-sm bg-[#b8860b]/10">
+                  Tech Support
+                </span>
+              </div>
+              <p className={`font-serif text-base font-bold text-white mb-1`}>
+                Developed by Zaid Bin Athar
+              </p>
+              <div className="flex flex-wrap items-center gap-3 text-xs mt-2.5">
+                <a
+                  href="https://wa.me/923256232379"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-green-400 hover:text-green-300 transition-colors"
+                >
+                  <MessageCircle size={13} />
+                  +92 325 6232379
+                </a>
+                <span className="text-neutral-600">·</span>
+                <a
+                  href="tel:+923256232379"
+                  className="text-neutral-400 hover:text-[#d4a017] transition-colors"
+                >
+                  Call: +92 325 6232379
+                </a>
               </div>
             </div>
           </div>
