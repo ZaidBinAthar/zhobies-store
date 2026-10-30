@@ -1,44 +1,10 @@
+import { useState, useEffect } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import {
   Shirt, Gem, Scissors, Star,
   Package, Truck, RotateCcw, Shield
 } from 'lucide-react'
-
-const products = [
-  {
-    id: 'p1',
-    name: 'Executive Navy Suit',
-    category: 'Formal',
-    price: 'PKR 8,500',
-    badge: 'Bestseller',
-    colors: ['#1a237e', '#37474f', '#212121'],
-    image: '/collection-formal.jpg',
-    rating: 5,
-    reviews: 42,
-  },
-  {
-    id: 'p2',
-    name: 'Classic Cream Hoodie Set',
-    category: 'Casual',
-    price: 'PKR 3,200',
-    badge: 'New',
-    colors: ['#f5f0e8', '#37474f', '#795548'],
-    image: '/collection-casual.jpg',
-    rating: 5,
-    reviews: 28,
-  },
-  {
-    id: 'p3',
-    name: 'Royal Embroidered Kurta',
-    category: 'Traditional',
-    price: 'PKR 5,800',
-    badge: 'Premium',
-    colors: ['#1a237e', '#4a148c', '#006064'],
-    image: '/collection-traditional.jpg',
-    rating: 5,
-    reviews: 65,
-  },
-]
+import { fetchProducts, getLocalProducts } from '../utils/productsStore'
 
 const benefits = [
   { icon: Scissors, label: 'Master Tailoring' },
@@ -53,6 +19,25 @@ const benefits = [
 
 export default function Services() {
   const [ref, isVisible] = useScrollReveal(0.05)
+  const [products, setProducts] = useState(() => getLocalProducts())
+  const [selectedCategory, setSelectedCategory] = useState('All')
+
+  useEffect(() => {
+    fetchProducts().then((data) => {
+      if (data && data.length > 0) setProducts(data)
+    })
+
+    const handleUpdate = () => {
+      setProducts(getLocalProducts())
+    }
+    window.addEventListener('products_updated', handleUpdate)
+    return () => window.removeEventListener('products_updated', handleUpdate)
+  }, [])
+
+  const categories = ['All', 'Formal', 'Casual', 'Traditional']
+  const filteredProducts = selectedCategory === 'All'
+    ? products
+    : products.filter(p => p.category?.toLowerCase() === selectedCategory.toLowerCase())
 
   return (
     <section id="products" className="py-20 md:py-28 relative">
@@ -76,9 +61,26 @@ export default function Services() {
           <div className="gold-divider mt-4" />
         </div>
 
+        {/* Category Filter Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-5 py-2 text-xs uppercase tracking-[0.2em] font-medium transition-all ${
+                selectedCategory === cat
+                  ? 'bg-[#b8860b] text-white shadow-lg shadow-[#b8860b]/20 font-semibold'
+                  : 'bg-[#171410] text-neutral-400 border border-[#b8860b]/20 hover:border-[#b8860b]/50 hover:text-[#d4a017]'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
         {/* Products Grid */}
         <div className="grid md:grid-cols-3 gap-6 mb-16">
-          {products.map((product, i) => (
+          {filteredProducts.map((product, i) => (
             <div
               key={product.id}
               className="group cursor-pointer product-card border border-[#b8860b]/10 hover:border-[#b8860b]/30"

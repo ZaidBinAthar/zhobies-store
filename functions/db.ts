@@ -29,4 +29,26 @@ export async function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_contact_status
     ON contact_submissions (status)
   `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS products (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      category VARCHAR(100) NOT NULL,
+      price VARCHAR(100) NOT NULL,
+      badge VARCHAR(50),
+      colors TEXT[],
+      image TEXT,
+      rating NUMERIC(2,1) DEFAULT 5.0,
+      reviews INT DEFAULT 0,
+      description TEXT,
+      in_stock BOOLEAN DEFAULT TRUE,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    )
+  `;
+
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_products_category
+    ON products (category)
+  `;
 }
