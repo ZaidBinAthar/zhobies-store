@@ -1,7 +1,7 @@
 import { Heart, Mail, MessageCircle, MapPin } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 
-const WHATSAPP_NUMBER = '923256232379'
+const WHATSAPP_NUMBER = '923247201988'
 
 const footerLinks = [
   { name: 'Home', href: '#home' },
@@ -85,8 +85,8 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   aria-label={social.label}
                   className={`w-9 h-9 border border-[#b8860b]/20 flex items-center justify-center transition-all duration-300 ${isDark
-                      ? 'text-neutral-500 hover:text-[#d4a017] hover:border-[#b8860b]'
-                      : 'text-neutral-500 hover:text-[#8b6508] hover:border-[#8b6508]'
+                    ? 'text-neutral-500 hover:text-[#d4a017] hover:border-[#b8860b]'
+                    : 'text-neutral-500 hover:text-[#8b6508] hover:border-[#8b6508]'
                     } hover:bg-[#b8860b]/10`}
                 >
                   <social.icon />

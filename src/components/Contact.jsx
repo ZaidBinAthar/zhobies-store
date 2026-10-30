@@ -16,7 +16,7 @@ const FacebookIcon = ({ size = 16 }) => (
 )
 import { API_CONFIG } from '../config/api'
 
-const WHATSAPP_NUMBER = '923256232379'
+const WHATSAPP_NUMBER = '923247201988'
 
 const orderTypes = [
   'Formal Suit / Blazer',
@@ -80,8 +80,8 @@ export default function Contact() {
   }
 
   const inputClasses = `w-full px-4 py-3 text-sm transition-all focus:outline-none border ${isDark
-      ? 'bg-[#171410] border-[#b8860b]/15 focus:border-[#b8860b]/50 text-white placeholder-neutral-600'
-      : 'bg-[#faf8f5] border-[#b8860b]/20 focus:border-[#b8860b]/50 text-neutral-900 placeholder-neutral-400'
+    ? 'bg-[#171410] border-[#b8860b]/15 focus:border-[#b8860b]/50 text-white placeholder-neutral-600'
+    : 'bg-[#faf8f5] border-[#b8860b]/20 focus:border-[#b8860b]/50 text-neutral-900 placeholder-neutral-400'
     } rounded-none`
 
   return (
