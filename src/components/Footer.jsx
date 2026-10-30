@@ -84,11 +84,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className={`w-9 h-9 border border-[#b8860b]/20 flex items-center justify-center transition-all duration-300 ${
-                    isDark
+                  className={`w-9 h-9 border border-[#b8860b]/20 flex items-center justify-center transition-all duration-300 ${isDark
                       ? 'text-neutral-500 hover:text-[#d4a017] hover:border-[#b8860b]'
                       : 'text-neutral-500 hover:text-[#8b6508] hover:border-[#8b6508]'
-                  } hover:bg-[#b8860b]/10`}
+                    } hover:bg-[#b8860b]/10`}
                 >
                   <social.icon />
                 </a>
@@ -107,9 +106,8 @@ export default function Footer() {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => handleClick(e, link.href)}
-                  className={`text-sm transition-all w-fit flex items-center gap-2 group ${
-                    isDark ? 'text-neutral-500 hover:text-[#d4a017]' : 'text-neutral-500 hover:text-[#8b6508]'
-                  }`}
+                  className={`text-sm transition-all w-fit flex items-center gap-2 group ${isDark ? 'text-neutral-500 hover:text-[#d4a017]' : 'text-neutral-500 hover:text-[#8b6508]'
+                    }`}
                 >
                   <span className="w-0 group-hover:w-3 h-px bg-[#b8860b] transition-all duration-300" />
                   {link.name}
@@ -134,11 +132,11 @@ export default function Footer() {
                 +92 325 6232379
               </a>
               <a
-                href="mailto:zaidiprox@gmail.com"
+                href="mailto:zohaibafzal4566@gmail.com"
                 className={`flex items-center gap-2.5 text-sm transition-colors ${isDark ? 'text-neutral-500 hover:text-[#d4a017]' : 'text-neutral-500 hover:text-[#8b6508]'}`}
               >
                 <Mail size={13} />
-                zaidiprox@gmail.com
+                zohaibafzal4566@gmail.com
               </a>
               <div className={`flex items-center gap-2.5 text-sm ${isDark ? 'text-neutral-500' : 'text-neutral-500'}`}>
                 <MapPin size={13} className="text-[#b8860b]" />

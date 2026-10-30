@@ -79,11 +79,10 @@ export default function Contact() {
     }
   }
 
-  const inputClasses = `w-full px-4 py-3 text-sm transition-all focus:outline-none border ${
-    isDark
+  const inputClasses = `w-full px-4 py-3 text-sm transition-all focus:outline-none border ${isDark
       ? 'bg-[#171410] border-[#b8860b]/15 focus:border-[#b8860b]/50 text-white placeholder-neutral-600'
       : 'bg-[#faf8f5] border-[#b8860b]/20 focus:border-[#b8860b]/50 text-neutral-900 placeholder-neutral-400'
-  } rounded-none`
+    } rounded-none`
 
   return (
     <section id="contact" className="py-20 md:py-28 relative">
@@ -238,8 +237,8 @@ export default function Contact() {
                   {
                     icon: Mail,
                     label: 'Email',
-                    value: 'zaidiprox@gmail.com',
-                    href: 'mailto:zaidiprox@gmail.com?subject=Clothing%20Order%20Enquiry',
+                    value: 'zohaibafzal4566@gmail.com',
+                    href: 'mailto:zohaibafzal4566@gmail.com?subject=Clothing%20Order%20Enquiry',
                     color: 'hover:text-[#d4a017] hover:border-[#b8860b]/30',
                   },
                   {
@@ -262,9 +261,8 @@ export default function Contact() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-3 px-4 py-3 border border-[#b8860b]/10 transition-all duration-300 group ${
-                      isDark ? 'text-neutral-400' : 'text-neutral-600'
-                    } ${link.color}`}
+                    className={`flex items-center gap-3 px-4 py-3 border border-[#b8860b]/10 transition-all duration-300 group ${isDark ? 'text-neutral-400' : 'text-neutral-600'
+                      } ${link.color}`}
                   >
                     <span className="group-hover:scale-110 transition-transform">
                       <link.icon size={16} />
