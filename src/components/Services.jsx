@@ -90,9 +90,10 @@ export default function Services() {
               {/* Image */}
               <div className="relative h-72 overflow-hidden bg-[#171410]">
                 <img
-                  src={product.image}
+                  src={product.image || '/collection-formal.jpg'}
                   alt={product.name}
                   className="product-img w-full h-full object-cover object-top"
+                  onError={(e) => { e.currentTarget.src = '/collection-formal.jpg' }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b09]/60 via-transparent to-transparent" />
 

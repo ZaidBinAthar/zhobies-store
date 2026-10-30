@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { API_CONFIG } from '../config/api'
 import {
   Mail, Phone, User, MessageSquare, Calendar,
   ChevronDown, ChevronUp, Eye, Archive,
   RefreshCw, Loader2, Inbox, Lock, LogOut,
   ShoppingBag, Package, CheckCircle, Clock,
-  Shirt, ArrowLeft, Star, MapPin, Plus, Edit3, Trash2, X, Check, Image as ImageIcon
+  Shirt, ArrowLeft, Star, MapPin, Plus, Edit3, Trash2, X, Check, Image as ImageIcon, Upload
 } from 'lucide-react'
 import {
   fetchProducts,
@@ -174,8 +174,11 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
     inStock: true,
   })
   const [saving, setSaving] = useState(false)
+  const [imageError, setImageError] = useState('')
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
+    setImageError('')
     if (product) {
       setFormData({
         name: product.name || '',
@@ -204,6 +207,62 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
       })
     }
   }, [product, isOpen])
+
+  // Handle uploading photos from device gallery or camera
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setImageError('')
+
+    if (!file.type.startsWith('image/')) {
+      setImageError('Please select a valid image file (JPG, PNG, WEBP, etc.)')
+      return
+    }
+
+    // Read the file as data URL and compress if too large so it persists smoothly
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const img = new Image()
+      img.onload = () => {
+        // Create canvas to resize to reasonable max dimension (e.g. max 1200px)
+        const canvas = document.createElement('canvas')
+        const MAX_WIDTH = 1200
+        const MAX_HEIGHT = 1200
+        let width = img.width
+        let height = img.height
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width
+            width = MAX_WIDTH
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height
+            height = MAX_HEIGHT
+          }
+        }
+
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+
+        // Convert to webp/jpeg with high quality
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
+        setFormData((prev) => ({ ...prev, image: dataUrl }))
+      }
+      img.onerror = () => {
+        setImageError('Failed to process image')
+      }
+      img.src = event.target.result
+    }
+    reader.onerror = () => {
+      setImageError('Failed to read file from device')
+    }
+    reader.readAsDataURL(file)
+  }
 
   if (!isOpen) return null
 
@@ -337,27 +396,80 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
             </div>
           </div>
 
-          {/* Image selection */}
+          {/* Image Upload & Selection */}
           <div>
             <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
-              Image URL or Local Asset
+              Product Image (Device Gallery / Photo or URL) *
             </label>
+
+            {/* Hidden file input */}
             <input
-              type="text"
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-              placeholder="/collection-formal.jpg or https://..."
-              className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none mb-2"
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
             />
+
+            {/* Upload Button + Preview Row */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-3">
+              {/* Device Photo / Gallery Upload trigger */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed border-[#b8860b]/40 hover:border-[#b8860b] bg-[#171410]/60 hover:bg-[#b8860b]/10 transition-all cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#b8860b]/20 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                  <Upload size={18} className="text-[#d4a017]" />
+                </div>
+                <span className="text-xs font-semibold text-white group-hover:text-[#d4a017] transition-colors">
+                  Upload from Device / Gallery
+                </span>
+                <span className="text-[10px] text-neutral-400 mt-0.5">
+                  Click to choose photos from phone or computer
+                </span>
+              </button>
+
+              {/* Current Image Preview */}
+              {formData.image && (
+                <div className="w-full sm:w-28 h-28 border border-[#b8860b]/30 bg-[#171410] relative shrink-0 overflow-hidden group">
+                  <img
+                    src={formData.image}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => { e.currentTarget.src = '/collection-formal.jpg' }}
+                  />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] text-[#d4a017] uppercase tracking-wider font-semibold">
+                    Preview
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {imageError && (
+              <p className="text-xs text-red-400 mb-2">{imageError}</p>
+            )}
+
+            {/* Or manual URL / local path */}
+            <div className="mb-2">
+              <input
+                type="text"
+                value={formData.image}
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                placeholder="/collection-formal.jpg or https://... or base64"
+                className="w-full px-3.5 py-2 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-xs focus:outline-none"
+              />
+            </div>
+
             {/* Quick Presets */}
             <div className="flex flex-wrap gap-2 text-[11px] text-neutral-400">
-              <span className="text-neutral-500">Quick select:</span>
+              <span className="text-neutral-500">Preset collections:</span>
               {sampleImages.map((img) => (
                 <button
                   type="button"
                   key={img.url}
                   onClick={() => setFormData({ ...formData, image: img.url })}
-                  className="px-2 py-0.5 border border-[#b8860b]/20 hover:border-[#b8860b]/60 text-[#d4a017] transition-colors"
+                  className="px-2 py-0.5 border border-[#b8860b]/20 hover:border-[#b8860b]/60 text-[#d4a017] transition-colors text-[10px]"
                 >
                   {img.label}
                 </button>
