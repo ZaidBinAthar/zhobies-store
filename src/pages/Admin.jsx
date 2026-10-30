@@ -294,9 +294,11 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
   ]
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="relative glass border border-[#b8860b]/30 w-full max-w-xl my-8 p-6 sm:p-8 bg-[#120f0c] shadow-2xl">
-        <div className="flex items-center justify-between pb-4 border-b border-[#b8860b]/20 mb-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-hidden">
+      <div className="relative glass border border-[#b8860b]/30 w-full max-w-xl max-h-[92vh] sm:max-h-[88vh] bg-[#120f0c] shadow-2xl flex flex-col my-auto animate-in fade-in zoom-in-95 duration-200">
+        
+        {/* Header - Fixed */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#b8860b]/20 bg-[#120f0c] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 border border-[#b8860b]/60 flex items-center justify-center text-[#d4a017]">
               {isEditing ? <Edit3 size={15} /> : <Plus size={16} />}
@@ -312,13 +314,15 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-neutral-400 hover:text-white transition-colors"
+            className="p-1.5 text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
           >
             <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form with scrollable body */}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-6 overflow-y-auto space-y-4 flex-1 overscroll-contain">
           {/* Name */}
           <div>
             <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
@@ -505,8 +509,10 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
             />
           </div>
 
-          {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#b8860b]/15">
+          </div>
+
+          {/* Modal Actions - Fixed Footer */}
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#b8860b]/20 bg-[#120f0c] shrink-0">
             <button
               type="button"
               onClick={onClose}
@@ -517,7 +523,7 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
             <button
               type="submit"
               disabled={saving}
-              className="btn-primary !py-2.5 !px-6 text-xs"
+              className="btn-primary !py-2.5 !px-6 text-xs flex items-center gap-2"
             >
               {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
               {isEditing ? 'Save Changes' : 'Create Product'}
