@@ -1,4 +1,4 @@
-import { Heart, Mail, MessageCircle, MapPin } from 'lucide-react'
+import { Heart, Mail, MessageCircle, MapPin, Lock } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 import { useCompany } from '../hooks/useCompany'
 
@@ -170,9 +170,20 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className={`border-t pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 ${isDark ? 'border-[#b8860b]/10' : 'border-[#b8860b]/15'}`}>
-          <p className={`text-xs tracking-wide ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
-            &copy; {new Date().getFullYear()} {companyName}. All rights reserved.
-          </p>
+          <div className="flex items-center gap-2">
+            <p className={`text-xs tracking-wide ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
+              &copy; {new Date().getFullYear()} {companyName}. All rights reserved.
+            </p>
+            {/* Secret Link to /#admin */}
+            <a
+              href="#admin"
+              className="opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity p-1 text-neutral-500 hover:text-[#d4a017]"
+              title="Portal Management"
+              aria-label="Admin Portal"
+            >
+              <Lock size={11} />
+            </a>
+          </div>
           <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
             <span className={isDark ? 'text-neutral-500' : 'text-neutral-500'}>
               Developed by <strong className="text-[#d4a017] font-semibold">Zaid Bin Athar</strong>

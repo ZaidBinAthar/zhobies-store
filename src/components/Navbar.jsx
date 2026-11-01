@@ -179,13 +179,6 @@ export default function Navbar() {
               <ShoppingBag size={15} />
               Shop Now
             </a>
-            <a
-              href="#admin"
-              onClick={() => setIsOpen(false)}
-              className="text-center text-xs tracking-wider uppercase text-neutral-500 hover:text-[#d4a017] pt-2"
-            >
-              Admin & Settings
-            </a>
           </div>
         </div>
       )}

@@ -17,8 +17,20 @@ import {
 } from '../utils/productsStore'
 import { fetchCompany, getLocalCompany, updateCompany, DEFAULT_COMPANY_ID } from '../utils/companyStore'
 
-const ADMIN_USERNAME = 'admin'
-const ADMIN_PASSWORD = 'imadmin'
+const USERS = {
+  admin: {
+    username: 'zaid',
+    password: 'zaidipro',
+    role: 'admin', // full access
+    displayName: 'Admin'
+  },
+  owner: {
+    username: 'owner',
+    password: 'owner321?',
+    role: 'owner', // cannot access or change settings
+    displayName: 'Store Owner'
+  }
+}
 
 const statusConfig = {
   new: {
@@ -58,19 +70,33 @@ function LoginGate({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Supports username "admin" and password "imadmin" (or legacy password)
+    const cleanUser = username.trim().toLowerCase()
+
+    // 1. Check Owner
+    if (cleanUser === USERS.owner.username && password === USERS.owner.password) {
+      sessionStorage.setItem('admin_auth', 'true')
+      sessionStorage.setItem('admin_user', 'owner')
+      sessionStorage.setItem('admin_role', 'owner')
+      onLogin('owner')
+      return
+    }
+
+    // 2. Check Admin (or legacy password support)
     if (
-      (username.trim().toLowerCase() === ADMIN_USERNAME && password === ADMIN_PASSWORD) ||
-      (!username && password === 'Zaidipro')
+      (cleanUser === USERS.admin.username && password === USERS.admin.password) ||
+      (!cleanUser && password === 'Zaidipro')
     ) {
       sessionStorage.setItem('admin_auth', 'true')
-      onLogin()
-    } else {
-      setError('Invalid username or password')
-      setPassword('')
-      setShaking(true)
-      setTimeout(() => setShaking(false), 500)
+      sessionStorage.setItem('admin_user', 'admin')
+      sessionStorage.setItem('admin_role', 'admin')
+      onLogin('admin')
+      return
     }
+
+    setError('Invalid username or password')
+    setPassword('')
+    setShaking(true)
+    setTimeout(() => setShaking(false), 500)
   }
 
   const logoUrl = company?.logoUrl
@@ -100,9 +126,14 @@ function LoginGate({ onLogin }) {
           )}
           <h1 className="font-serif text-xl font-bold text-white tracking-wide text-center">{companyName}</h1>
           <p className="text-[#b8860b] text-[10px] tracking-[0.3em] uppercase mt-0.5">Admin Management Portal</p>
-          <div className="flex items-center gap-2 mt-4">
-            <Lock size={12} className="text-neutral-500" />
-            <p className="text-neutral-500 text-xs">Login: <span className="text-[#d4a017]">admin</span> / <span className="text-[#d4a017]">imadmin</span></p>
+          <div className="flex flex-col items-center gap-1 mt-4 text-[11px] text-neutral-500">
+            <div className="flex items-center gap-1.5">
+              <Lock size={11} />
+              <span>Admin: <strong className="text-[#d4a017]">admin</strong> / <strong className="text-[#d4a017]">imadmin</strong></span>
+            </div>
+            <div>
+              <span>Owner: <strong className="text-[#d4a017]">owner</strong> / <strong className="text-[#d4a017]">owner321?</strong></span>
+            </div>
           </div>
         </div>
 
@@ -311,7 +342,7 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-hidden">
       <div className="relative glass border border-[#b8860b]/30 w-full max-w-xl max-h-[92vh] sm:max-h-[88vh] bg-[#120f0c] shadow-2xl flex flex-col my-auto animate-in fade-in zoom-in-95 duration-200">
-        
+
         {/* Header - Fixed */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#b8860b]/20 bg-[#120f0c] shrink-0">
           <div className="flex items-center gap-3">
@@ -338,191 +369,191 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
         {/* Form with scrollable body */}
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
           <div className="p-6 overflow-y-auto space-y-4 flex-1 overscroll-contain">
-          {/* Name */}
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
-              Product Title *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g. Royal Embroidered Sherwani"
-              className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
-            />
-          </div>
-
-          {/* Category & Price */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Name */}
             <div>
               <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
-                Category *
-              </label>
-              <select
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
-              >
-                <option value="Formal">Formal</option>
-                <option value="Casual">Casual</option>
-                <option value="Traditional">Traditional</option>
-                <option value="Accessories">Accessories</option>
-                <option value="Bespoke">Bespoke Stitching</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
-                Price *
+                Product Title *
               </label>
               <input
                 type="text"
                 required
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                placeholder="PKR 6,500"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g. Royal Embroidered Sherwani"
                 className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
               />
             </div>
-          </div>
 
-          {/* Badge & Stock */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Category & Price */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                  Category *
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                >
+                  <option value="Formal">Formal</option>
+                  <option value="Casual">Casual</option>
+                  <option value="Traditional">Traditional</option>
+                  <option value="Accessories">Accessories</option>
+                  <option value="Bespoke">Bespoke Stitching</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                  Price *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  placeholder="PKR 6,500"
+                  className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Badge & Stock */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                  Badge / Tag
+                </label>
+                <input
+                  type="text"
+                  value={formData.badge}
+                  onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                  placeholder="Bestseller, New, Premium..."
+                  className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                  Availability
+                </label>
+                <select
+                  value={formData.inStock ? 'true' : 'false'}
+                  onChange={(e) => setFormData({ ...formData, inStock: e.target.value === 'true' })}
+                  className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                >
+                  <option value="true">In Stock (Available)</option>
+                  <option value="false">Out of Stock</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Image Upload & Selection */}
             <div>
               <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
-                Badge / Tag
+                Product Image (Device Gallery / Photo or URL) *
               </label>
+
+              {/* Hidden file input */}
               <input
-                type="text"
-                value={formData.badge}
-                onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                placeholder="Bestseller, New, Premium..."
-                className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
               />
-            </div>
-            <div>
-              <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
-                Availability
-              </label>
-              <select
-                value={formData.inStock ? 'true' : 'false'}
-                onChange={(e) => setFormData({ ...formData, inStock: e.target.value === 'true' })}
-                className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
-              >
-                <option value="true">In Stock (Available)</option>
-                <option value="false">Out of Stock</option>
-              </select>
-            </div>
-          </div>
 
-          {/* Image Upload & Selection */}
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
-              Product Image (Device Gallery / Photo or URL) *
-            </label>
-
-            {/* Hidden file input */}
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-
-            {/* Upload Button + Preview Row */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-3">
-              {/* Device Photo / Gallery Upload trigger */}
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed border-[#b8860b]/40 hover:border-[#b8860b] bg-[#171410]/60 hover:bg-[#b8860b]/10 transition-all cursor-pointer group"
-              >
-                <div className="w-10 h-10 rounded-full bg-[#b8860b]/20 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                  <Upload size={18} className="text-[#d4a017]" />
-                </div>
-                <span className="text-xs font-semibold text-white group-hover:text-[#d4a017] transition-colors">
-                  Upload from Device / Gallery
-                </span>
-                <span className="text-[10px] text-neutral-400 mt-0.5">
-                  Click to choose photos from phone or computer
-                </span>
-              </button>
-
-              {/* Current Image Preview */}
-              {formData.image && (
-                <div className="w-full sm:w-28 h-28 border border-[#b8860b]/30 bg-[#171410] relative shrink-0 overflow-hidden group">
-                  <img
-                    src={formData.image}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                    onError={(e) => { e.currentTarget.src = '/collection-formal.jpg' }}
-                  />
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] text-[#d4a017] uppercase tracking-wider font-semibold">
-                    Preview
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {imageError && (
-              <p className="text-xs text-red-400 mb-2">{imageError}</p>
-            )}
-
-            {/* Or manual URL / local path */}
-            <div className="mb-2">
-              <input
-                type="text"
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                placeholder="/collection-formal.jpg or https://... or base64"
-                className="w-full px-3.5 py-2 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-xs focus:outline-none"
-              />
-            </div>
-
-            {/* Quick Presets */}
-            <div className="flex flex-wrap gap-2 text-[11px] text-neutral-400">
-              <span className="text-neutral-500">Preset collections:</span>
-              {sampleImages.map((img) => (
+              {/* Upload Button + Preview Row */}
+              <div className="flex flex-col sm:flex-row gap-3 mb-3">
+                {/* Device Photo / Gallery Upload trigger */}
                 <button
                   type="button"
-                  key={img.url}
-                  onClick={() => setFormData({ ...formData, image: img.url })}
-                  className="px-2 py-0.5 border border-[#b8860b]/20 hover:border-[#b8860b]/60 text-[#d4a017] transition-colors text-[10px]"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed border-[#b8860b]/40 hover:border-[#b8860b] bg-[#171410]/60 hover:bg-[#b8860b]/10 transition-all cursor-pointer group"
                 >
-                  {img.label}
+                  <div className="w-10 h-10 rounded-full bg-[#b8860b]/20 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                    <Upload size={18} className="text-[#d4a017]" />
+                  </div>
+                  <span className="text-xs font-semibold text-white group-hover:text-[#d4a017] transition-colors">
+                    Upload from Device / Gallery
+                  </span>
+                  <span className="text-[10px] text-neutral-400 mt-0.5">
+                    Click to choose photos from phone or computer
+                  </span>
                 </button>
-              ))}
+
+                {/* Current Image Preview */}
+                {formData.image && (
+                  <div className="w-full sm:w-28 h-28 border border-[#b8860b]/30 bg-[#171410] relative shrink-0 overflow-hidden group">
+                    <img
+                      src={formData.image}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.currentTarget.src = '/collection-formal.jpg' }}
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[10px] text-[#d4a017] uppercase tracking-wider font-semibold">
+                      Preview
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {imageError && (
+                <p className="text-xs text-red-400 mb-2">{imageError}</p>
+              )}
+
+              {/* Or manual URL / local path */}
+              <div className="mb-2">
+                <input
+                  type="text"
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  placeholder="/collection-formal.jpg or https://... or base64"
+                  className="w-full px-3.5 py-2 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-xs focus:outline-none"
+                />
+              </div>
+
+              {/* Quick Presets */}
+              <div className="flex flex-wrap gap-2 text-[11px] text-neutral-400">
+                <span className="text-neutral-500">Preset collections:</span>
+                {sampleImages.map((img) => (
+                  <button
+                    type="button"
+                    key={img.url}
+                    onClick={() => setFormData({ ...formData, image: img.url })}
+                    className="px-2 py-0.5 border border-[#b8860b]/20 hover:border-[#b8860b]/60 text-[#d4a017] transition-colors text-[10px]"
+                  >
+                    {img.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Color palette hexes */}
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
-              Color Swatches (comma separated hex codes)
-            </label>
-            <input
-              type="text"
-              value={formData.colors}
-              onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
-              placeholder="#1a237e, #37474f, #212121"
-              className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
-            />
-          </div>
+            {/* Color palette hexes */}
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                Color Swatches (comma separated hex codes)
+              </label>
+              <input
+                type="text"
+                value={formData.colors}
+                onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
+                placeholder="#1a237e, #37474f, #212121"
+                className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+              />
+            </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
-              Description / Fabric Details
-            </label>
-            <textarea
-              rows={3}
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Crafted with pure Egyptian cotton and hand-embroidered details..."
-              className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
-            />
-          </div>
+            {/* Description */}
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                Description / Fabric Details
+              </label>
+              <textarea
+                rows={3}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Crafted with pure Egyptian cotton and hand-embroidered details..."
+                className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+              />
+            </div>
 
           </div>
 
@@ -555,7 +586,13 @@ export default function Admin() {
   const [authenticated, setAuthenticated] = useState(
     () => sessionStorage.getItem('admin_auth') === 'true'
   )
+  const [currentUser, setCurrentUser] = useState(
+    () => sessionStorage.getItem('admin_user') || 'admin'
+  )
   const [activeTab, setActiveTab] = useState('products') // 'products', 'orders', or 'settings'
+
+  const isOwner = currentUser === 'owner'
+  const canAccessSettings = !isOwner // Owner cannot change settings or access settings nav
 
   // Company Settings State
   const [selectedCompanyId, setSelectedCompanyId] = useState(DEFAULT_COMPANY_ID)
@@ -581,6 +618,7 @@ export default function Admin() {
 
   // Load company settings by companyId
   const loadCompanyData = async (companyId = selectedCompanyId) => {
+    if (!canAccessSettings) return
     setSettingsLoading(true)
     setSettingsError('')
     try {
@@ -599,6 +637,10 @@ export default function Admin() {
   // Handle saving company settings
   const handleSaveSettings = async (e) => {
     e.preventDefault()
+    if (!canAccessSettings) {
+      setSettingsError('Permission denied: Store Owner is not authorized to modify settings.')
+      return
+    }
     setSettingsLoading(true)
     setSettingsSaved(false)
     setSettingsError('')
@@ -665,13 +707,21 @@ export default function Admin() {
     if (authenticated) {
       fetchSubmissions()
       reloadProducts()
-      loadCompanyData(selectedCompanyId)
+      if (canAccessSettings) {
+        loadCompanyData(selectedCompanyId)
+      } else if (activeTab === 'settings') {
+        setActiveTab('products')
+      }
     }
-  }, [filter, authenticated, selectedCompanyId])
+  }, [filter, authenticated, selectedCompanyId, canAccessSettings])
 
   const logout = () => {
     sessionStorage.removeItem('admin_auth')
+    sessionStorage.removeItem('admin_user')
+    sessionStorage.removeItem('admin_role')
     setAuthenticated(false)
+    setCurrentUser('admin')
+    setActiveTab('products')
   }
 
   const updateStatus = async (id, newStatus) => {
@@ -727,7 +777,14 @@ export default function Admin() {
   }
 
   if (!authenticated) {
-    return <LoginGate onLogin={() => setAuthenticated(true)} />
+    return (
+      <LoginGate
+        onLogin={(user) => {
+          setAuthenticated(true)
+          setCurrentUser(user || 'admin')
+        }}
+      />
+    )
   }
 
   // Filtered products
@@ -775,10 +832,10 @@ export default function Admin() {
             )}
             <div>
               <h1 className="font-serif text-2xl font-bold text-white tracking-wide">
-                {companySettings?.name || 'Zhobies Wear'} Admin Hub
+                {companySettings?.name || 'Zhobies Wear'} {isOwner ? 'Owner Dashboard' : 'Admin Hub'}
               </h1>
               <p className="text-neutral-500 text-xs tracking-wide mt-0.5">
-                Logged in as <span className="text-[#d4a017] font-medium">admin</span> · Company ID #{selectedCompanyId}
+                Logged in as <span className="text-[#d4a017] font-semibold">{currentUser}</span> ({isOwner ? 'Store Owner' : 'Administrator'}) · Company ID #{selectedCompanyId}
               </p>
             </div>
           </div>
@@ -821,11 +878,10 @@ export default function Admin() {
         <div className="flex flex-wrap items-center gap-3 border-b border-[#b8860b]/20 pb-4 mb-8">
           <button
             onClick={() => setActiveTab('products')}
-            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
-              activeTab === 'products'
+            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${activeTab === 'products'
                 ? 'bg-[#b8860b] text-white shadow-lg shadow-[#b8860b]/20'
                 : 'glass border border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017]'
-            }`}
+              }`}
             id="tab-products"
           >
             <Package size={15} />
@@ -833,11 +889,10 @@ export default function Admin() {
           </button>
           <button
             onClick={() => setActiveTab('orders')}
-            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
-              activeTab === 'orders'
+            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${activeTab === 'orders'
                 ? 'bg-[#b8860b] text-white shadow-lg shadow-[#b8860b]/20'
                 : 'glass border border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017]'
-            }`}
+              }`}
             id="tab-orders"
           >
             <ShoppingBag size={15} />
@@ -846,18 +901,19 @@ export default function Admin() {
               <span className="w-2 h-2 rounded-full bg-[#d4a017] animate-pulse" />
             )}
           </button>
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
-              activeTab === 'settings'
-                ? 'bg-[#b8860b] text-white shadow-lg shadow-[#b8860b]/20'
-                : 'glass border border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017]'
-            }`}
-            id="tab-settings"
-          >
-            <Settings size={15} />
-            Website Settings
-          </button>
+          {canAccessSettings && (
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${activeTab === 'settings'
+                  ? 'bg-[#b8860b] text-white shadow-lg shadow-[#b8860b]/20'
+                  : 'glass border border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017]'
+                }`}
+              id="tab-settings"
+            >
+              <Settings size={15} />
+              Website Settings
+            </button>
+          )}
         </div>
 
         {/* ════════════════════ PRODUCTS MANAGEMENT TAB ════════════════════ */}
@@ -871,11 +927,10 @@ export default function Admin() {
                   <button
                     key={cat}
                     onClick={() => setProductCategoryFilter(cat)}
-                    className={`px-3.5 py-1.5 text-xs uppercase tracking-wider transition-all ${
-                      productCategoryFilter === cat
+                    className={`px-3.5 py-1.5 text-xs uppercase tracking-wider transition-all ${productCategoryFilter === cat
                         ? 'bg-[#b8860b]/30 text-[#d4a017] border border-[#b8860b]'
                         : 'bg-[#171410] text-neutral-400 border border-[#b8860b]/15 hover:border-[#b8860b]/40'
-                    }`}
+                      }`}
                   >
                     {cat}
                   </button>
@@ -940,9 +995,8 @@ export default function Admin() {
                               {p.badge}
                             </span>
                           )}
-                          <span className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-semibold ${
-                            p.inStock !== false ? 'bg-green-950/80 text-green-300 border border-green-700/50' : 'bg-red-950/80 text-red-300 border border-red-700/50'
-                          }`}>
+                          <span className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-semibold ${p.inStock !== false ? 'bg-green-950/80 text-green-300 border border-green-700/50' : 'bg-red-950/80 text-red-300 border border-red-700/50'
+                            }`}>
                             {p.inStock !== false ? 'In Stock' : 'Sold Out'}
                           </span>
                         </div>
@@ -1055,17 +1109,15 @@ export default function Admin() {
                 <button
                   key={tab.key}
                   onClick={() => setFilter(tab.key)}
-                  className={`px-4 py-2 text-xs tracking-wider uppercase font-medium transition-all flex items-center gap-2 ${
-                    filter === tab.key
+                  className={`px-4 py-2 text-xs tracking-wider uppercase font-medium transition-all flex items-center gap-2 ${filter === tab.key
                       ? 'bg-[#b8860b] text-white'
                       : 'glass border border-[#b8860b]/15 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/30'
-                  }`}
+                    }`}
                   id={`filter-${tab.key || 'all'}`}
                 >
                   {tab.label}
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-sm ${
-                    filter === tab.key ? 'bg-white/20' : 'bg-[#b8860b]/15 text-[#b8860b]'
-                  }`}>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-sm ${filter === tab.key ? 'bg-white/20' : 'bg-[#b8860b]/15 text-[#b8860b]'
+                    }`}>
                     {tab.count}
                   </span>
                 </button>
@@ -1108,11 +1160,10 @@ export default function Admin() {
                 return (
                   <div
                     key={sub.id}
-                    className={`glass border transition-all duration-200 overflow-hidden ${
-                      isExpanded
+                    className={`glass border transition-all duration-200 overflow-hidden ${isExpanded
                         ? 'border-[#b8860b]/40 shadow-lg shadow-black/40'
                         : 'border-[#b8860b]/10 hover:border-[#b8860b]/25'
-                    }`}
+                      }`}
                   >
                     {/* Header Row */}
                     <button
@@ -1291,7 +1342,7 @@ export default function Admin() {
         )}
 
         {/* ════════════════════ WEBSITE SETTINGS TAB ════════════════════ */}
-        {activeTab === 'settings' && (
+        {activeTab === 'settings' && canAccessSettings && (
           <div className="space-y-8 animate-fade-in">
             {/* Header / Company ID Selector */}
             <div className="glass border border-[#b8860b]/20 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1319,11 +1370,10 @@ export default function Admin() {
                         setSelectedCompanyId(cid)
                         loadCompanyData(cid)
                       }}
-                      className={`px-3 py-1 text-xs font-mono font-bold transition-all border ${
-                        selectedCompanyId === cid
+                      className={`px-3 py-1 text-xs font-mono font-bold transition-all border ${selectedCompanyId === cid
                           ? 'bg-[#b8860b] text-white border-[#b8860b]'
                           : 'glass text-neutral-400 border-[#b8860b]/20 hover:border-[#b8860b]/50 hover:text-white'
-                      }`}
+                        }`}
                     >
                       #{cid}
                     </button>
