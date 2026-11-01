@@ -9,6 +9,8 @@ export default defineConfig({
       updatestatus: { name: "updatestatus", source: "./functions/submissions-patch.ts" },
       setupdb: { name: "setupdb", source: "./functions/setup-db.ts" },
       products: { name: "products", source: "./functions/products.ts" },
+      company: { name: "company", source: "./functions/company.ts" },
+      auth: { name: "auth", source: "./functions/auth.ts" },
     },
   },
 });

@@ -1,4 +1,5 @@
 import { neon } from '@neondatabase/serverless'
+import { API_CONFIG } from '../config/api'
 
 const NEON_CONNECTION_STRING =
   import.meta.env.VITE_NEON_DATABASE_URL ||
@@ -9,12 +10,45 @@ const sql = neon(NEON_CONNECTION_STRING)
 
 const AUTH_USER_KEY = 'zvs_authenticated_user'
 
-// SHA-256 for local browser hashing matching backend
+// Local SHA-256 fallback if direct Neon queries are made
 async function sha256Hex(text) {
   const msgUint8 = new TextEncoder().encode(text)
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+/**
+ * Robust JSON fetch wrapper that guards against empty bodies and unexpected HTML responses
+ */
+async function safeFetchJson(url, options) {
+  let res
+  try {
+    res = await fetch(url, options)
+  } catch (netErr) {
+    throw new Error(`Unable to reach the auth server: ${netErr.message || 'Network error'}`)
+  }
+
+  const rawText = await res.text()
+  let data = null
+
+  if (rawText && rawText.trim().length > 0) {
+    try {
+      data = JSON.parse(rawText)
+    } catch {
+      throw new Error(
+        `Server responded with non-JSON format (status ${res.status}): ${rawText.slice(0, 100)}`
+      )
+    }
+  } else {
+    data = {}
+  }
+
+  if (!res.ok) {
+    throw new Error(data.error || `Request failed with status ${res.status}`)
+  }
+
+  return data
 }
 
 let tableChecked = false
@@ -30,12 +64,29 @@ export async function ensureUsersTable() {
         role VARCHAR(50) DEFAULT 'user',
         full_name VARCHAR(255),
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        is_verified BOOLEAN DEFAULT FALSE
       )
+    `)
+    await sql.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE
+    `)
+    await sql.query(`
+      CREATE TABLE IF NOT EXISTS email_otps (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) NOT NULL,
+        otp_code VARCHAR(255) NOT NULL,
+        attempts INT DEFAULT 0,
+        expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `)
+    await sql.query(`
+      ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS attempts INT DEFAULT 0
     `)
     tableChecked = true
   } catch (err) {
-    console.warn('Could not verify Neon users table:', err)
+    console.warn('Could not verify Neon users & otps table:', err)
   }
 }
 
@@ -63,9 +114,39 @@ export function saveCurrentUser(user) {
 }
 
 /**
- * SIGNUP FUNCTION: Stores user directly into Neon PostgreSQL
+ * Send OTP to customer's email via backend endpoint
  */
-export async function signup({ username, email, password, fullName, role = 'user' }) {
+export async function sendOtp({ email }) {
+  if (!email) {
+    throw new Error('Email is required.')
+  }
+
+  return await safeFetchJson(API_CONFIG.auth, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'send-otp', email }),
+  })
+}
+
+/**
+ * Verify OTP directly
+ */
+export async function verifyOtp({ email, otp }) {
+  if (!email || !otp) {
+    throw new Error('Email and 6-digit verification code are required.')
+  }
+
+  return await safeFetchJson(API_CONFIG.auth, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'verify-otp', email, otp }),
+  })
+}
+
+/**
+ * Complete signup with OTP verification
+ */
+export async function signup({ username, email, password, fullName, otp, role = 'user' }) {
   if (!username || !email || !password) {
     throw new Error('Username, email, and password are required.')
   }
@@ -82,44 +163,33 @@ export async function signup({ username, email, password, fullName, role = 'user
   if (password.length < 6) {
     throw new Error('Password must be at least 6 characters.')
   }
-
-  await ensureUsersTable()
-  const passwordHash = await sha256Hex(password)
-  const userFullName = fullName ? fullName.trim() : cleanUsername
-
-  try {
-    const existing = await sql.query(
-      `SELECT id, username, email FROM users WHERE LOWER(username) = $1 OR LOWER(email) = $2 LIMIT 1`,
-      [cleanUsername, cleanEmail]
-    )
-
-    if (existing && existing.length > 0) {
-      if (existing[0].username.toLowerCase() === cleanUsername) {
-        throw new Error('Username is already taken.')
-      }
-      throw new Error('Email is already registered.')
-    }
-
-    const inserted = await sql.query(
-      `INSERT INTO users (username, email, password_hash, role, full_name)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING id, username, email, role, full_name, created_at`,
-      [cleanUsername, cleanEmail, passwordHash, role, userFullName]
-    )
-
-    if (inserted && inserted.length > 0) {
-      const user = inserted[0]
-      saveCurrentUser(user)
-      return { success: true, user }
-    }
-  } catch (err) {
-    console.error('Neon signup failed:', err)
-    throw err
+  if (!otp) {
+    throw new Error('Please enter the 6-digit verification code sent to your email.')
   }
+
+  const data = await safeFetchJson(API_CONFIG.auth, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'signup',
+      username: cleanUsername,
+      email: cleanEmail,
+      password,
+      fullName,
+      role,
+      otp,
+    }),
+  })
+
+  if (data.user) {
+    saveCurrentUser(data.user)
+  }
+
+  return data
 }
 
 /**
- * LOGIN FUNCTION: Authenticates user against Neon PostgreSQL
+ * LOGIN FUNCTION: Authenticates user against backend API or Neon PostgreSQL
  */
 export async function login({ usernameOrEmail, password }) {
   if (!usernameOrEmail || !password) {
@@ -127,13 +197,30 @@ export async function login({ usernameOrEmail, password }) {
   }
 
   const identifier = usernameOrEmail.trim().toLowerCase()
-  const passwordHash = await sha256Hex(password)
-
-  await ensureUsersTable()
 
   try {
+    const data = await safeFetchJson(API_CONFIG.auth, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'login',
+        username: identifier,
+        password,
+      }),
+    })
+
+    if (data.user) {
+      saveCurrentUser(data.user)
+      return data
+    }
+  } catch (apiErr) {
+    // If backend endpoint is unreachable or 404, fallback to direct Neon query
+    console.warn('API login error, checking direct Neon connection:', apiErr)
+    await ensureUsersTable()
+    const passwordHash = await sha256Hex(password)
+
     const rows = await sql.query(
-      `SELECT id, username, email, password_hash, role, full_name, created_at
+      `SELECT id, username, email, password_hash, role, full_name, is_verified, created_at
        FROM users
        WHERE LOWER(username) = $1 OR LOWER(email) = $1
        LIMIT 1`,
@@ -155,18 +242,15 @@ export async function login({ usernameOrEmail, password }) {
       email: found.email,
       role: found.role,
       fullName: found.full_name,
-      createdAt: found.created_at
+      isVerified: found.is_verified ?? true,
+      createdAt: found.created_at,
     }
 
     saveCurrentUser(user)
     return { success: true, user }
-  } catch (err) {
-    console.error('Neon login failed:', err)
-    throw err
   }
 }
 
 export function logout() {
   saveCurrentUser(null)
 }
-

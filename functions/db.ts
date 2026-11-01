@@ -75,8 +75,38 @@ export async function initDatabase() {
       role VARCHAR(50) DEFAULT 'user',
       full_name VARCHAR(255),
       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      is_verified BOOLEAN DEFAULT FALSE
     )
+  `;
+
+  await sql`
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE
+  `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS email_otps (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(255) NOT NULL,
+      otp_code VARCHAR(255) NOT NULL,
+      attempts INT DEFAULT 0,
+      expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    )
+  `;
+
+  await sql`
+    ALTER TABLE email_otps ADD COLUMN IF NOT EXISTS attempts INT DEFAULT 0
+  `;
+
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_email_otps_email
+    ON email_otps (LOWER(email))
+  `;
+
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_email_otps_expires
+    ON email_otps (expires_at)
   `;
 
   await sql`
