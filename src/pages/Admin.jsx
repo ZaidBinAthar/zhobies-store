@@ -5,7 +5,8 @@ import {
   ChevronDown, ChevronUp, Eye, Archive,
   RefreshCw, Loader2, Inbox, Lock, LogOut,
   ShoppingBag, Package, CheckCircle, Clock,
-  Shirt, ArrowLeft, Star, MapPin, Plus, Edit3, Trash2, X, Check, Image as ImageIcon, Upload
+  Shirt, ArrowLeft, Star, MapPin, Plus, Edit3, Trash2, X, Check, Image as ImageIcon, Upload,
+  Settings, Building, Save
 } from 'lucide-react'
 import {
   fetchProducts,
@@ -14,6 +15,7 @@ import {
   updateProduct,
   deleteProduct
 } from '../utils/productsStore'
+import { fetchCompany, getLocalCompany, updateCompany, DEFAULT_COMPANY_ID } from '../utils/companyStore'
 
 const ADMIN_USERNAME = 'admin'
 const ADMIN_PASSWORD = 'imadmin'
@@ -48,6 +50,7 @@ const orderTypeIcons = {
 
 // ─── Login Gate ──────────────────────────────────────────────────────────────
 function LoginGate({ onLogin }) {
+  const company = getLocalCompany()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -70,6 +73,10 @@ function LoginGate({ onLogin }) {
     }
   }
 
+  const logoUrl = company?.logoUrl
+  const companyName = company?.name || 'Zhobies Wear'
+  const logoLetter = companyName.charAt(0).toUpperCase() || 'Z'
+
   return (
     <div className="min-h-screen bg-[#0d0b09] flex items-center justify-center px-6">
       {/* Background accent */}
@@ -80,10 +87,18 @@ function LoginGate({ onLogin }) {
       <div className={`relative glass border border-[#b8860b]/20 p-8 w-full max-w-sm ${shaking ? 'animate-[shake_0.3s_ease-in-out]' : ''}`}>
         {/* Brand */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 border border-[#b8860b]/50 flex items-center justify-center mb-4">
-            <span className="text-[#d4a017] font-serif font-bold text-2xl">Z</span>
-          </div>
-          <h1 className="font-serif text-xl font-bold text-white tracking-wide">Zohaibies Wear</h1>
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt={companyName}
+              className="w-16 h-16 object-contain rounded border border-[#b8860b]/50 mb-4 p-1 bg-[#171410]"
+            />
+          ) : (
+            <div className="w-14 h-14 border border-[#b8860b]/50 flex items-center justify-center mb-4">
+              <span className="text-[#d4a017] font-serif font-bold text-2xl">{logoLetter}</span>
+            </div>
+          )}
+          <h1 className="font-serif text-xl font-bold text-white tracking-wide text-center">{companyName}</h1>
           <p className="text-[#b8860b] text-[10px] tracking-[0.3em] uppercase mt-0.5">Admin Management Portal</p>
           <div className="flex items-center gap-2 mt-4">
             <Lock size={12} className="text-neutral-500" />
@@ -540,7 +555,15 @@ export default function Admin() {
   const [authenticated, setAuthenticated] = useState(
     () => sessionStorage.getItem('admin_auth') === 'true'
   )
-  const [activeTab, setActiveTab] = useState('products') // 'products' or 'orders'
+  const [activeTab, setActiveTab] = useState('products') // 'products', 'orders', or 'settings'
+
+  // Company Settings State
+  const [selectedCompanyId, setSelectedCompanyId] = useState(DEFAULT_COMPANY_ID)
+  const [companySettings, setCompanySettings] = useState(() => getLocalCompany())
+  const [settingsLoading, setSettingsLoading] = useState(false)
+  const [settingsSaved, setSettingsSaved] = useState(false)
+  const [settingsError, setSettingsError] = useState('')
+  const [logoPreview, setLogoPreview] = useState(companySettings?.logoUrl || '')
 
   // Submissions State
   const [submissions, setSubmissions] = useState([])
@@ -555,6 +578,57 @@ export default function Admin() {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [productCategoryFilter, setProductCategoryFilter] = useState('All')
+
+  // Load company settings by companyId
+  const loadCompanyData = async (companyId = selectedCompanyId) => {
+    setSettingsLoading(true)
+    setSettingsError('')
+    try {
+      const data = await fetchCompany(companyId)
+      if (data) {
+        setCompanySettings(data)
+        setLogoPreview(data.logoUrl || '')
+      }
+    } catch (err) {
+      setSettingsError(err.message || 'Failed to load company data')
+    } finally {
+      setSettingsLoading(false)
+    }
+  }
+
+  // Handle saving company settings
+  const handleSaveSettings = async (e) => {
+    e.preventDefault()
+    setSettingsLoading(true)
+    setSettingsSaved(false)
+    setSettingsError('')
+    try {
+      const res = await updateCompany(selectedCompanyId, companySettings)
+      if (res?.data) {
+        setCompanySettings(res.data)
+        setLogoPreview(res.data.logoUrl || '')
+      }
+      setSettingsSaved(true)
+      setTimeout(() => setSettingsSaved(false), 3000)
+    } catch (err) {
+      setSettingsError(err.message || 'Failed to update company settings')
+    } finally {
+      setSettingsLoading(false)
+    }
+  }
+
+  const handleLogoUpload = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const base64 = reader.result
+        setLogoPreview(base64)
+        setCompanySettings((prev) => ({ ...prev, logoUrl: base64 }))
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   // Load orders
   const fetchSubmissions = async () => {
@@ -591,8 +665,9 @@ export default function Admin() {
     if (authenticated) {
       fetchSubmissions()
       reloadProducts()
+      loadCompanyData(selectedCompanyId)
     }
-  }, [filter, authenticated])
+  }, [filter, authenticated, selectedCompanyId])
 
   const logout = () => {
     sessionStorage.removeItem('admin_auth')
@@ -685,15 +760,25 @@ export default function Admin() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 border border-[#b8860b]/50 flex items-center justify-center">
-              <span className="text-[#d4a017] font-serif font-bold text-2xl">Z</span>
-            </div>
+            {companySettings?.logoUrl ? (
+              <img
+                src={companySettings.logoUrl}
+                alt={companySettings.name}
+                className="w-12 h-12 object-contain rounded border border-[#b8860b]/50 p-1 bg-[#171410]"
+              />
+            ) : (
+              <div className="w-12 h-12 border border-[#b8860b]/50 flex items-center justify-center">
+                <span className="text-[#d4a017] font-serif font-bold text-2xl">
+                  {companySettings?.name ? companySettings.name.charAt(0).toUpperCase() : 'Z'}
+                </span>
+              </div>
+            )}
             <div>
               <h1 className="font-serif text-2xl font-bold text-white tracking-wide">
-                Zohaibies Admin Hub
+                {companySettings?.name || 'Zhobies Wear'} Admin Hub
               </h1>
               <p className="text-neutral-500 text-xs tracking-wide mt-0.5">
-                Logged in as <span className="text-[#d4a017] font-medium">admin</span> · Complete Store Management
+                Logged in as <span className="text-[#d4a017] font-medium">admin</span> · Company ID #{selectedCompanyId}
               </p>
             </div>
           </div>
@@ -702,7 +787,8 @@ export default function Admin() {
             <button
               onClick={() => {
                 if (activeTab === 'orders') fetchSubmissions()
-                else reloadProducts()
+                else if (activeTab === 'products') reloadProducts()
+                else loadCompanyData(selectedCompanyId)
               }}
               className="p-2.5 glass border border-[#b8860b]/15 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/40 transition-all flex items-center gap-2 text-xs"
               title="Refresh"
@@ -731,8 +817,8 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Main Navigation Tabs: Products vs Orders */}
-        <div className="flex items-center gap-3 border-b border-[#b8860b]/20 pb-4 mb-8">
+        {/* Main Navigation Tabs: Products vs Orders vs Settings */}
+        <div className="flex flex-wrap items-center gap-3 border-b border-[#b8860b]/20 pb-4 mb-8">
           <button
             onClick={() => setActiveTab('products')}
             className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
@@ -759,6 +845,18 @@ export default function Admin() {
             {newOrders > 0 && (
               <span className="w-2 h-2 rounded-full bg-[#d4a017] animate-pulse" />
             )}
+          </button>
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
+              activeTab === 'settings'
+                ? 'bg-[#b8860b] text-white shadow-lg shadow-[#b8860b]/20'
+                : 'glass border border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017]'
+            }`}
+            id="tab-settings"
+          >
+            <Settings size={15} />
+            Website Settings
           </button>
         </div>
 
@@ -1189,6 +1287,303 @@ export default function Admin() {
                 )
               })}
             </div>
+          </div>
+        )}
+
+        {/* ════════════════════ WEBSITE SETTINGS TAB ════════════════════ */}
+        {activeTab === 'settings' && (
+          <div className="space-y-8 animate-fade-in">
+            {/* Header / Company ID Selector */}
+            <div className="glass border border-[#b8860b]/20 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="font-serif text-xl font-bold text-white flex items-center gap-2.5">
+                  <Building size={20} className="text-[#d4a017]" />
+                  Website & Company Configuration
+                </h2>
+                <p className="text-neutral-400 text-xs mt-1">
+                  Manage website branding, company table records, and logo synchronized directly with Neon PostgreSQL.
+                </p>
+              </div>
+
+              {/* Company ID selector for multi-company support */}
+              <div className="flex items-center gap-3">
+                <label className="text-xs uppercase tracking-wider text-neutral-400 font-medium">
+                  Active Company ID:
+                </label>
+                <div className="flex items-center gap-1.5">
+                  {[1, 2, 3].map((cid) => (
+                    <button
+                      key={cid}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCompanyId(cid)
+                        loadCompanyData(cid)
+                      }}
+                      className={`px-3 py-1 text-xs font-mono font-bold transition-all border ${
+                        selectedCompanyId === cid
+                          ? 'bg-[#b8860b] text-white border-[#b8860b]'
+                          : 'glass text-neutral-400 border-[#b8860b]/20 hover:border-[#b8860b]/50 hover:text-white'
+                      }`}
+                    >
+                      #{cid}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Notification Badges */}
+            {settingsSaved && (
+              <div className="p-4 bg-green-500/15 border border-green-500/30 text-green-400 text-sm flex items-center gap-3">
+                <CheckCircle size={18} />
+                <span>Company information for <strong>ID #{selectedCompanyId}</strong> saved and updated across website!</span>
+              </div>
+            )}
+            {settingsError && (
+              <div className="p-4 bg-red-500/15 border border-red-500/30 text-red-400 text-sm flex items-center gap-3">
+                <X size={18} />
+                <span>{settingsError}</span>
+              </div>
+            )}
+
+            {/* Settings Form */}
+            <form onSubmit={handleSaveSettings} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left Column: Logo & Branding Preview */}
+              <div className="glass border border-[#b8860b]/20 p-6 space-y-6">
+                <h3 className="font-serif text-base font-semibold text-white flex items-center gap-2 border-b border-[#b8860b]/15 pb-3">
+                  <ImageIcon size={16} className="text-[#d4a017]" />
+                  Website Logo
+                </h3>
+
+                {/* Logo Preview Display */}
+                <div className="flex flex-col items-center justify-center p-6 border border-dashed border-[#b8860b]/30 bg-[#171410]/50 rounded text-center">
+                  {logoPreview ? (
+                    <div className="relative group">
+                      <img
+                        src={logoPreview}
+                        alt="Logo Preview"
+                        className="w-28 h-28 object-contain rounded border border-[#b8860b]/40 bg-[#0d0b09] p-2 mb-3"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLogoPreview('')
+                          setCompanySettings((prev) => ({ ...prev, logoUrl: '' }))
+                        }}
+                        className="absolute -top-2 -right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-500 transition-colors shadow"
+                        title="Remove Logo"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-24 h-24 border border-[#b8860b]/50 flex items-center justify-center text-[#d4a017] font-serif font-bold text-3xl mb-3 bg-[#0d0b09]">
+                      {companySettings?.name ? companySettings.name.charAt(0).toUpperCase() : 'Z'}
+                    </div>
+                  )}
+                  <p className="text-neutral-400 text-xs">
+                    {logoPreview ? 'Custom logo uploaded' : 'Default monogram will be rendered'}
+                  </p>
+                </div>
+
+                {/* File Upload Input */}
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-2">
+                    Upload Logo Image
+                  </label>
+                  <label className="flex items-center justify-center gap-2 px-4 py-2.5 glass border border-[#b8860b]/30 text-neutral-300 hover:text-[#d4a017] hover:border-[#b8860b] cursor-pointer transition-all text-xs">
+                    <Upload size={14} />
+                    <span>Choose File (PNG, JPG, SVG, WebP)</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                {/* Direct Image URL input */}
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                    Or Enter Image / Logo URL
+                  </label>
+                  <input
+                    type="url"
+                    value={companySettings?.logoUrl || ''}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setCompanySettings((prev) => ({ ...prev, logoUrl: val }))
+                      setLogoPreview(val)
+                    }}
+                    placeholder="https://example.com/logo.png"
+                    className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                  />
+                </div>
+
+                {/* Live Brand Preview Card */}
+                <div className="border-t border-[#b8860b]/15 pt-4">
+                  <label className="block text-[11px] uppercase tracking-wider text-neutral-500 mb-2 font-medium">
+                    Navbar Preview (Company ID #{selectedCompanyId})
+                  </label>
+                  <div className="p-3 bg-[#0d0b09] border border-[#b8860b]/25 flex items-center gap-3">
+                    {logoPreview ? (
+                      <img
+                        src={logoPreview}
+                        alt="Brand preview"
+                        className="w-8 h-8 object-contain rounded border border-[#b8860b]/40 p-0.5"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 border border-[#b8860b]/60 flex items-center justify-center text-[#d4a017] font-bold text-sm font-serif">
+                        {companySettings?.name ? companySettings.name.charAt(0).toUpperCase() : 'Z'}
+                      </div>
+                    )}
+                    <div className="flex flex-col leading-tight">
+                      <span className="font-serif font-bold text-sm text-white tracking-wide">
+                        {companySettings?.name || 'Zhobies Wear'}
+                      </span>
+                      <span className="text-[#b8860b] text-[8px] tracking-[0.2em] uppercase font-medium">
+                        {companySettings?.tagline || 'Official Store'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Company Information Fields */}
+              <div className="lg:col-span-2 glass border border-[#b8860b]/20 p-6 space-y-6">
+                <h3 className="font-serif text-base font-semibold text-white flex items-center gap-2 border-b border-[#b8860b]/15 pb-3">
+                  <Building size={16} className="text-[#d4a017]" />
+                  Company Table Details (ID #{selectedCompanyId})
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Website / Company Name */}
+                  <div className="md:col-span-2">
+                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5 font-medium">
+                      Website Name <span className="text-[#d4a017]">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={companySettings?.name || ''}
+                      onChange={(e) =>
+                        setCompanySettings((prev) => ({ ...prev, name: e.target.value }))
+                      }
+                      placeholder="e.g. Zhobies Wear"
+                      className="w-full bg-[#171410] border border-[#b8860b]/30 px-4 py-2.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all font-serif"
+                    />
+                    <p className="text-[11px] text-neutral-500 mt-1">
+                      Current website name: <strong>Zhobies Wear</strong>. Changing this will immediately reflect across the Navbar, Footer, and Admin panel.
+                    </p>
+                  </div>
+
+                  {/* Tagline / Subtitle */}
+                  <div className="md:col-span-2">
+                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                      Brand Tagline / Subtitle
+                    </label>
+                    <input
+                      type="text"
+                      value={companySettings?.tagline || ''}
+                      onChange={(e) =>
+                        setCompanySettings((prev) => ({ ...prev, tagline: e.target.value }))
+                      }
+                      placeholder="e.g. Premium Clothing & Tailoring"
+                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                    />
+                  </div>
+
+                  {/* Contact Email */}
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                      Contact Email
+                    </label>
+                    <input
+                      type="email"
+                      value={companySettings?.email || ''}
+                      onChange={(e) =>
+                        setCompanySettings((prev) => ({ ...prev, email: e.target.value }))
+                      }
+                      placeholder="contact@zhobieswear.com"
+                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                    />
+                  </div>
+
+                  {/* Contact Phone / WhatsApp */}
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                      Phone Number / WhatsApp
+                    </label>
+                    <input
+                      type="text"
+                      value={companySettings?.phone || ''}
+                      onChange={(e) =>
+                        setCompanySettings((prev) => ({ ...prev, phone: e.target.value }))
+                      }
+                      placeholder="+92 300 1234567"
+                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                    />
+                  </div>
+
+                  {/* Physical Address */}
+                  <div className="md:col-span-2">
+                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                      Physical Store Address
+                    </label>
+                    <input
+                      type="text"
+                      value={companySettings?.address || ''}
+                      onChange={(e) =>
+                        setCompanySettings((prev) => ({ ...prev, address: e.target.value }))
+                      }
+                      placeholder="Commercial Market, Lahore, Pakistan"
+                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                    />
+                  </div>
+
+                  {/* Brand Description / About snippet */}
+                  <div className="md:col-span-2">
+                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                      Store Description (Shown in Footer)
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={companySettings?.description || ''}
+                      onChange={(e) =>
+                        setCompanySettings((prev) => ({ ...prev, description: e.target.value }))
+                      }
+                      placeholder="Write brief description of your clothing store..."
+                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all resize-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Action Bar */}
+                <div className="pt-4 border-t border-[#b8860b]/15 flex items-center justify-between">
+                  <div className="text-[11px] text-neutral-500">
+                    Target database table: <code className="text-[#d4a017]">company</code> (record id = {selectedCompanyId})
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={settingsLoading}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-[#b8860b] hover:bg-[#d4a017] text-white text-xs font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
+                  >
+                    {settingsLoading ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin" />
+                        Saving to Database...
+                      </>
+                    ) : (
+                      <>
+                        <Save size={14} />
+                        Save Settings
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         )}
 

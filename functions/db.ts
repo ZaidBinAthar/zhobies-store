@@ -51,4 +51,18 @@ export async function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_products_category
     ON products (category)
   `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS company (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      tagline VARCHAR(255),
+      logo_url TEXT,
+      phone VARCHAR(100),
+      email VARCHAR(255),
+      address TEXT,
+      description TEXT,
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    )
+  `;
 }

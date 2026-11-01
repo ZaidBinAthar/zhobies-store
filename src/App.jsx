@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ThemeProvider, useTheme } from './hooks/useTheme'
+import { CompanyProvider } from './hooks/useCompany'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Collections from './components/About'        // Collections section
@@ -61,7 +62,9 @@ function AppContent() {
 export default function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <CompanyProvider>
+        <AppContent />
+      </CompanyProvider>
     </ThemeProvider>
   )
 }

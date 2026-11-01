@@ -4,4 +4,5 @@ export const API_CONFIG = {
   updateStatus: import.meta.env.VITE_NEON_FUNCTION_UPDATESTATUS_URL || "https://br-raspy-moon-az1535z7-updatestatus.compute.c-3.ap-southeast-1.aws.neon.tech",
   setupDb: import.meta.env.VITE_NEON_FUNCTION_SETUPDB_URL || "https://br-raspy-moon-az1535z7-setupdb.compute.c-3.ap-southeast-1.aws.neon.tech",
   products: import.meta.env.VITE_NEON_FUNCTION_PRODUCTS_URL || "https://br-raspy-moon-az1535z7-products.compute.c-3.ap-southeast-1.aws.neon.tech",
+  company: import.meta.env.VITE_NEON_FUNCTION_COMPANY_URL || "https://br-raspy-moon-az1535z7-company.compute.c-3.ap-southeast-1.aws.neon.tech",
 }

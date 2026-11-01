@@ -1,5 +1,6 @@
 import { Heart, Mail, MessageCircle, MapPin } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
+import { useCompany } from '../hooks/useCompany'
 
 const WHATSAPP_NUMBER = '923247201988'
 
@@ -43,7 +44,15 @@ const socialLinks = [
 
 export default function Footer() {
   const { theme } = useTheme()
+  const { company } = useCompany()
   const isDark = theme === 'dark'
+
+  const companyName = company?.name || 'Zhobies Wear'
+  const logoLetter = companyName.trim().charAt(0).toUpperCase() || 'Z'
+  const logoUrl = company?.logoUrl
+  const nameParts = companyName.split(' ')
+  const firstNamePart = nameParts[0] || companyName
+  const remainingNamePart = nameParts.slice(1).join(' ')
 
   const handleClick = (e, href) => {
     e.preventDefault()
@@ -59,21 +68,34 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 border border-[#b8860b]/60 flex items-center justify-center text-[#d4a017] font-bold text-lg font-serif">
-                Z
-              </div>
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={companyName}
+                  className="w-11 h-11 object-contain rounded border border-[#b8860b]/40 p-1 bg-[#0d0b09]/40"
+                />
+              ) : (
+                <div className="w-10 h-10 border border-[#b8860b]/60 flex items-center justify-center text-[#d4a017] font-bold text-lg font-serif">
+                  {logoLetter}
+                </div>
+              )}
               <div className="flex flex-col leading-tight">
                 <span className={`font-serif font-bold text-xl tracking-wide ${isDark ? 'text-white' : 'text-neutral-900'}`}>
-                  Zohaibies
+                  {firstNamePart}
                 </span>
-                <span className="text-[#b8860b] text-[9px] tracking-[0.25em] uppercase font-medium -mt-0.5">
-                  Wear
-                </span>
+                {remainingNamePart ? (
+                  <span className="text-[#b8860b] text-[9px] tracking-[0.25em] uppercase font-medium -mt-0.5">
+                    {remainingNamePart}
+                  </span>
+                ) : company?.tagline ? (
+                  <span className="text-[#b8860b] text-[9px] tracking-[0.2em] uppercase font-medium -mt-0.5">
+                    {company.tagline}
+                  </span>
+                ) : null}
               </div>
             </div>
             <p className={`text-sm leading-relaxed mb-5 max-w-xs ${isDark ? 'text-neutral-500' : 'text-neutral-500'}`}>
-              Premium clothing for every occasion — crafted with passion, delivered with care.
-              Elevating Pakistani fashion, one garment at a time.
+              {company?.description || 'Premium clothing for every occasion — crafted with passion, delivered with care. Elevating modern fashion, one garment at a time.'}
             </p>
             {/* Social Icons */}
             <div className="flex gap-2.5">
@@ -149,7 +171,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className={`border-t pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 ${isDark ? 'border-[#b8860b]/10' : 'border-[#b8860b]/15'}`}>
           <p className={`text-xs tracking-wide ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
-            &copy; 2026 Zohaibies Wear. All rights reserved.
+            &copy; {new Date().getFullYear()} {companyName}. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
             <span className={isDark ? 'text-neutral-500' : 'text-neutral-500'}>

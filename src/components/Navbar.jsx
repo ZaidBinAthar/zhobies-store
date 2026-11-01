@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Menu, X, Sun, Moon, ShoppingBag, Search } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
+import { useCompany } from '../hooks/useCompany'
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -12,9 +13,19 @@ const navLinks = [
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme()
+  const { company } = useCompany()
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const isDark = theme === 'dark'
+
+  const companyName = company?.name || 'Zhobies Wear'
+  const logoLetter = companyName.trim().charAt(0).toUpperCase() || 'Z'
+  const logoUrl = company?.logoUrl
+
+  // Split name for styling (e.g. "Zhobies" and "Wear")
+  const nameParts = companyName.split(' ')
+  const firstNamePart = nameParts[0] || companyName
+  const remainingNamePart = nameParts.slice(1).join(' ')
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -47,16 +58,30 @@ export default function Navbar() {
           className="flex items-center gap-3 group"
           id="nav-logo"
         >
-          <div className="w-9 h-9 border border-[#b8860b]/60 flex items-center justify-center text-[#d4a017] font-bold text-base transition-all group-hover:border-[#d4a017] group-hover:bg-[#b8860b]/10 font-serif">
-            Z
-          </div>
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt={companyName}
+              className="w-10 h-10 object-contain rounded border border-[#b8860b]/40 p-0.5 group-hover:border-[#d4a017] transition-all bg-[#0d0b09]/40"
+            />
+          ) : (
+            <div className="w-9 h-9 border border-[#b8860b]/60 flex items-center justify-center text-[#d4a017] font-bold text-base transition-all group-hover:border-[#d4a017] group-hover:bg-[#b8860b]/10 font-serif">
+              {logoLetter}
+            </div>
+          )}
           <div className="flex flex-col leading-tight">
             <span className={`font-serif font-bold text-lg tracking-wide ${isDark ? 'text-white' : 'text-neutral-900'}`}>
-              Zohaibies
+              {firstNamePart}
             </span>
-            <span className="text-[#b8860b] text-[9px] tracking-[0.25em] uppercase font-medium -mt-0.5">
-              Wear
-            </span>
+            {remainingNamePart ? (
+              <span className="text-[#b8860b] text-[9px] tracking-[0.25em] uppercase font-medium -mt-0.5">
+                {remainingNamePart}
+              </span>
+            ) : company?.tagline ? (
+              <span className="text-[#b8860b] text-[9px] tracking-[0.2em] uppercase font-medium -mt-0.5">
+                {company.tagline}
+              </span>
+            ) : null}
           </div>
         </a>
 
@@ -153,6 +178,13 @@ export default function Navbar() {
             >
               <ShoppingBag size={15} />
               Shop Now
+            </a>
+            <a
+              href="#admin"
+              onClick={() => setIsOpen(false)}
+              className="text-center text-xs tracking-wider uppercase text-neutral-500 hover:text-[#d4a017] pt-2"
+            >
+              Admin & Settings
             </a>
           </div>
         </div>
