@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Menu, X, Sun, Moon, ShoppingBag, Search } from 'lucide-react'
+import { Menu, X, Sun, Moon, ShoppingBag, Search, User, LogOut } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 import { useCompany } from '../hooks/useCompany'
+import { getCurrentUser, logout as authLogout } from '../utils/authService'
+import AuthModal from './AuthModal'
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -16,7 +18,18 @@ export default function Navbar() {
   const { company } = useCompany()
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [user, setUser] = useState(() => getCurrentUser())
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [authModalMode, setAuthModalMode] = useState('login')
   const isDark = theme === 'dark'
+
+  useEffect(() => {
+    const handleAuthChange = (e) => {
+      setUser(e.detail)
+    }
+    window.addEventListener('auth_user_changed', handleAuthChange)
+    return () => window.removeEventListener('auth_user_changed', handleAuthChange)
+  }, [])
 
   const companyName = company?.name || 'Zhobies Wear'
   const logoLetter = companyName.trim().charAt(0).toUpperCase() || 'Z'
@@ -105,7 +118,37 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-3">
+          {/* User Sign In / Profile Button */}
+          {user ? (
+            <div className="flex items-center gap-2 px-3 py-1.5 border border-[#b8860b]/30 bg-[#b8860b]/10 text-xs">
+              <User size={13} className="text-[#d4a017]" />
+              <span className={`font-medium ${isDark ? 'text-white' : 'text-neutral-900'}`}>
+                {user.fullName || user.username}
+              </span>
+              <button
+                onClick={() => authLogout()}
+                className="text-neutral-500 hover:text-red-400 p-0.5 ml-1 transition-colors"
+                title="Logout"
+              >
+                <LogOut size={12} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                setAuthModalMode('login')
+                setAuthModalOpen(true)
+              }}
+              className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium tracking-wider uppercase border border-[#b8860b]/30 hover:border-[#d4a017] transition-all ${
+                isDark ? 'text-neutral-300 hover:text-white' : 'text-neutral-700 hover:text-black'
+              }`}
+            >
+              <User size={14} className="text-[#d4a017]" />
+              <span>Sign In</span>
+            </button>
+          )}
+
           <button
             onClick={toggleTheme}
             className={`p-2.5 transition-all duration-200 ${
@@ -170,10 +213,40 @@ export default function Navbar() {
                 {link.name}
               </a>
             ))}
+            {user ? (
+              <div className="flex items-center justify-between px-4 py-3 bg-[#b8860b]/10 border border-[#b8860b]/30 text-xs my-2">
+                <span className="font-medium text-white flex items-center gap-1.5">
+                  <User size={13} className="text-[#d4a017]" />
+                  {user.fullName || user.username}
+                </span>
+                <button
+                  onClick={() => {
+                    authLogout()
+                    setIsOpen(false)
+                  }}
+                  className="text-red-400 hover:underline flex items-center gap-1"
+                >
+                  <LogOut size={12} />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setIsOpen(false)
+                  setAuthModalMode('login')
+                  setAuthModalOpen(true)
+                }}
+                className="w-full py-2.5 my-2 border border-[#b8860b]/40 text-[#d4a017] text-xs uppercase tracking-wider font-semibold flex items-center justify-center gap-2"
+              >
+                <User size={14} />
+                Sign In / Sign Up
+              </button>
+            )}
             <a
               href="#contact"
               onClick={(e) => handleClick(e, '#contact')}
-              className="btn-primary mt-3"
+              className="btn-primary mt-1"
               id="mobile-nav-cta"
             >
               <ShoppingBag size={15} />
@@ -182,6 +255,14 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Login & Signup Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        defaultMode={authModalMode}
+        onClose={() => setAuthModalOpen(false)}
+        onAuthSuccess={(u) => setUser(u)}
+      />
     </nav>
   )
 }
