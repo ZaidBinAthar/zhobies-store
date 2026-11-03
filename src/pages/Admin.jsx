@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { API_CONFIG } from '../config/api'
+import { useTheme } from '../hooks/useTheme'
 import {
   Mail, Phone, User, MessageSquare, Calendar,
   ChevronDown, ChevronUp, Eye, Archive,
   RefreshCw, Loader2, Inbox, Lock, LogOut,
   ShoppingBag, Package, CheckCircle, Clock,
   Shirt, ArrowLeft, Star, MapPin, Plus, Edit3, Trash2, X, Check, Image as ImageIcon, Upload,
-  Settings, Building, Save
+  Settings, Building, Save, Sun, Moon
 } from 'lucide-react'
 import {
   fetchProducts,
@@ -62,6 +63,8 @@ const orderTypeIcons = {
 
 // ─── Login Gate ──────────────────────────────────────────────────────────────
 function LoginGate({ onLogin }) {
+  const { theme, toggleTheme } = useTheme()
+  const isDark = theme === 'dark'
   const company = getLocalCompany()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -104,29 +107,43 @@ function LoginGate({ onLogin }) {
   const logoLetter = companyName.charAt(0).toUpperCase() || 'Z'
 
   return (
-    <div className="min-h-screen bg-[#0d0b09] flex items-center justify-center px-6">
+    <div className={`min-h-screen flex items-center justify-center px-6 relative transition-colors duration-300 ${isDark ? 'bg-[#0d0b09] text-neutral-200' : 'bg-[#faf8f5] text-neutral-800'}`}>
+      {/* Theme Toggle Button */}
+      <button
+        type="button"
+        onClick={toggleTheme}
+        className={`absolute top-6 right-6 p-2.5 rounded-full border transition-all cursor-pointer ${
+          isDark
+            ? 'glass border-[#b8860b]/20 text-[#d4a017] hover:border-[#b8860b]'
+            : 'bg-white border-[#b8860b]/30 text-[#b8860b] shadow-md hover:border-[#b8860b]'
+        }`}
+        title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      >
+        {isDark ? <Sun size={16} /> : <Moon size={16} />}
+      </button>
+
       {/* Background accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#b8860b]/5 rounded-full blur-[120px]" />
       </div>
 
-      <div className={`relative glass border border-[#b8860b]/20 p-8 w-full max-w-sm ${shaking ? 'animate-[shake_0.3s_ease-in-out]' : ''}`}>
+      <div className={`relative glass border ${isDark ? 'border-[#b8860b]/20 bg-[#120f0c]' : 'border-[#b8860b]/30 bg-white/95 shadow-xl'} p-8 w-full max-w-sm ${shaking ? 'animate-[shake_0.3s_ease-in-out]' : ''}`}>
         {/* Brand */}
         <div className="flex flex-col items-center mb-8">
           {logoUrl ? (
             <img
               src={logoUrl}
               alt={companyName}
-              className="w-16 h-16 object-contain rounded border border-[#b8860b]/50 mb-4 p-1 bg-[#171410]"
+              className={`w-16 h-16 object-contain rounded border border-[#b8860b]/50 mb-4 p-1 ${isDark ? 'bg-[#171410]' : 'bg-[#faf8f5]'}`}
             />
           ) : (
-            <div className="w-14 h-14 border border-[#b8860b]/50 flex items-center justify-center mb-4">
+            <div className={`w-14 h-14 border border-[#b8860b]/50 flex items-center justify-center mb-4 ${isDark ? 'bg-[#171410]' : 'bg-[#faf8f5]'}`}>
               <span className="text-[#d4a017] font-serif font-bold text-2xl">{logoLetter}</span>
             </div>
           )}
-          <h1 className="font-serif text-xl font-bold text-white tracking-wide text-center">{companyName}</h1>
+          <h1 className={`font-serif text-xl font-bold tracking-wide text-center ${isDark ? 'text-white' : 'text-neutral-900'}`}>{companyName}</h1>
           <p className="text-[#b8860b] text-[10px] tracking-[0.3em] uppercase mt-0.5">Admin Management Portal</p>
-          <div className="flex flex-col items-center gap-1 mt-4 text-[11px] text-neutral-500">
+          <div className={`flex flex-col items-center gap-1 mt-4 text-[11px] ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>
             <div className="flex items-center gap-1.5">
               <Lock size={11} />
               <span>Admin: <strong className="text-[#d4a017]">admin</strong> / <strong className="text-[#d4a017]">imadmin</strong></span>
@@ -144,31 +161,39 @@ function LoginGate({ onLogin }) {
             </div>
           )}
           <div>
-            <label className="block text-[10px] uppercase tracking-wider text-neutral-400 mb-1.5">Username</label>
+            <label className={`block text-[10px] uppercase tracking-wider mb-1.5 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>Username</label>
             <input
               type="text"
               value={username}
               onChange={(e) => { setUsername(e.target.value); setError('') }}
               autoFocus
-              className="w-full px-4 py-3 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm placeholder-neutral-600 focus:outline-none transition-all rounded-none"
+              className={`w-full px-4 py-3 border focus:outline-none transition-all rounded-none text-sm ${
+                isDark
+                  ? 'bg-[#171410] border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white placeholder-neutral-600'
+                  : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+              }`}
               placeholder="admin"
               id="admin-username"
             />
           </div>
           <div>
-            <label className="block text-[10px] uppercase tracking-wider text-neutral-400 mb-1.5">Password</label>
+            <label className={`block text-[10px] uppercase tracking-wider mb-1.5 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => { setPassword(e.target.value); setError('') }}
-              className="w-full px-4 py-3 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm placeholder-neutral-600 focus:outline-none transition-all rounded-none"
+              className={`w-full px-4 py-3 border focus:outline-none transition-all rounded-none text-sm ${
+                isDark
+                  ? 'bg-[#171410] border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white placeholder-neutral-600'
+                  : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+              }`}
               placeholder="••••••••"
               id="admin-password"
             />
           </div>
           <button
             type="submit"
-            className="btn-primary w-full !py-3 mt-2"
+            className="btn-primary w-full !py-3 mt-2 cursor-pointer"
             id="admin-login-btn"
           >
             <Lock size={15} />
@@ -178,7 +203,7 @@ function LoginGate({ onLogin }) {
 
         <a
           href="/"
-          className="flex items-center justify-center gap-2 mt-6 text-xs text-neutral-600 hover:text-[#b8860b] transition-colors"
+          className={`flex items-center justify-center gap-2 mt-6 text-xs transition-colors ${isDark ? 'text-neutral-500 hover:text-[#b8860b]' : 'text-neutral-600 hover:text-[#b8860b]'}`}
         >
           <ArrowLeft size={12} />
           Back to Store
@@ -190,15 +215,18 @@ function LoginGate({ onLogin }) {
 
 // ─── Stats Card ───────────────────────────────────────────────────────────────
 function StatCard({ icon: Icon, label, value, sub, color }) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
   return (
-    <div className={`glass border p-5 flex items-start gap-4 ${color}`}>
+    <div className={`glass border p-5 flex items-start gap-4 ${color} ${isDark ? '' : 'bg-white/85 shadow-xs'}`}>
       <div className="w-10 h-10 border border-inherit flex items-center justify-center shrink-0 opacity-70">
         <Icon size={18} />
       </div>
       <div>
-        <div className="text-2xl font-serif font-bold text-white">{value}</div>
-        <div className="text-xs tracking-wider mt-0.5 text-neutral-400">{label}</div>
-        {sub && <div className="text-[10px] text-neutral-600 mt-1">{sub}</div>}
+        <div className={`text-2xl font-serif font-bold ${isDark ? 'text-white' : 'text-neutral-900'}`}>{value}</div>
+        <div className={`text-xs tracking-wider mt-0.5 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>{label}</div>
+        {sub && <div className={`text-[10px] mt-1 ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>{sub}</div>}
       </div>
     </div>
   )
@@ -206,6 +234,8 @@ function StatCard({ icon: Icon, label, value, sub, color }) {
 
 // ─── Product Modal (Add / Edit) ──────────────────────────────────────────────
 function ProductModal({ product, isOpen, onClose, onSave }) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const isEditing = Boolean(product && product.id)
   const [formData, setFormData] = useState({
     name: '',
@@ -266,12 +296,10 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
       return
     }
 
-    // Read the file as data URL and compress if too large so it persists smoothly
     const reader = new FileReader()
     reader.onload = (event) => {
       const img = new Image()
       img.onload = () => {
-        // Create canvas to resize to reasonable max dimension (e.g. max 1200px)
         const canvas = document.createElement('canvas')
         const MAX_WIDTH = 1200
         const MAX_HEIGHT = 1200
@@ -295,7 +323,6 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
         const ctx = canvas.getContext('2d')
         ctx.drawImage(img, 0, 0, width, height)
 
-        // Convert to webp/jpeg with high quality
         const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
         setFormData((prev) => ({ ...prev, image: dataUrl }))
       }
@@ -339,28 +366,44 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
     { label: 'Hero Editorial', url: '/hero-fashion.jpg' },
   ]
 
+  const inputCls = `w-full px-3.5 py-2.5 border focus:outline-none transition-all text-sm rounded-none ${
+    isDark
+      ? 'bg-[#171410] border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white placeholder-neutral-600'
+      : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+  }`
+
+  const labelCls = `block text-xs uppercase tracking-wider mb-1 ${
+    isDark ? 'text-neutral-400' : 'text-neutral-600'
+  }`
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-hidden">
-      <div className="relative glass border border-[#b8860b]/30 w-full max-w-xl max-h-[92vh] sm:max-h-[88vh] bg-[#120f0c] shadow-2xl flex flex-col my-auto animate-in fade-in zoom-in-95 duration-200">
+      <div className={`relative glass border border-[#b8860b]/30 w-full max-w-xl max-h-[92vh] sm:max-h-[88vh] shadow-2xl flex flex-col my-auto animate-in fade-in zoom-in-95 duration-200 ${
+        isDark ? 'bg-[#120f0c] text-neutral-200' : 'bg-white text-neutral-900'
+      }`}>
 
         {/* Header - Fixed */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#b8860b]/20 bg-[#120f0c] shrink-0">
+        <div className={`flex items-center justify-between px-6 py-4 border-b border-[#b8860b]/20 shrink-0 ${
+          isDark ? 'bg-[#120f0c]' : 'bg-[#faf8f5]'
+        }`}>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 border border-[#b8860b]/60 flex items-center justify-center text-[#d4a017]">
               {isEditing ? <Edit3 size={15} /> : <Plus size={16} />}
             </div>
             <div>
-              <h3 className="font-serif text-lg font-bold text-white">
+              <h3 className={`font-serif text-lg font-bold ${isDark ? 'text-white' : 'text-neutral-900'}`}>
                 {isEditing ? 'Edit Product' : 'Add New Product'}
               </h3>
-              <p className="text-[10px] text-neutral-400 tracking-wider uppercase">
+              <p className={`text-[10px] tracking-wider uppercase ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                 {isEditing ? `Modifying ID #${product.id}` : 'Create a new catalog item'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
+            className={`p-1.5 transition-colors cursor-pointer ${
+              isDark ? 'text-neutral-400 hover:text-white hover:bg-white/5' : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100'
+            }`}
           >
             <X size={18} />
           </button>
@@ -371,7 +414,7 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
           <div className="p-6 overflow-y-auto space-y-4 flex-1 overscroll-contain">
             {/* Name */}
             <div>
-              <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+              <label className={labelCls}>
                 Product Title *
               </label>
               <input
@@ -380,30 +423,30 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="e.g. Royal Embroidered Sherwani"
-                className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                className={inputCls}
               />
             </div>
 
             {/* Category & Price */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                <label className={labelCls}>
                   Category *
                 </label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                  className={`${inputCls} cursor-pointer`}
                 >
-                  <option value="Formal">Formal</option>
-                  <option value="Casual">Casual</option>
-                  <option value="Traditional">Traditional</option>
-                  <option value="Accessories">Accessories</option>
-                  <option value="Bespoke">Bespoke Stitching</option>
+                  <option value="Formal" className={isDark ? 'bg-[#171410] text-white' : 'bg-white text-neutral-900'}>Formal</option>
+                  <option value="Casual" className={isDark ? 'bg-[#171410] text-white' : 'bg-white text-neutral-900'}>Casual</option>
+                  <option value="Traditional" className={isDark ? 'bg-[#171410] text-white' : 'bg-white text-neutral-900'}>Traditional</option>
+                  <option value="Accessories" className={isDark ? 'bg-[#171410] text-white' : 'bg-white text-neutral-900'}>Accessories</option>
+                  <option value="Bespoke" className={isDark ? 'bg-[#171410] text-white' : 'bg-white text-neutral-900'}>Bespoke Stitching</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                <label className={labelCls}>
                   Price *
                 </label>
                 <input
@@ -412,7 +455,7 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   placeholder="PKR 6,500"
-                  className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                  className={inputCls}
                 />
               </div>
             </div>
@@ -420,7 +463,7 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
             {/* Badge & Stock */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                <label className={labelCls}>
                   Badge / Tag
                 </label>
                 <input
@@ -428,27 +471,27 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
                   value={formData.badge}
                   onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
                   placeholder="Bestseller, New, Premium..."
-                  className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                  className={inputCls}
                 />
               </div>
               <div>
-                <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+                <label className={labelCls}>
                   Availability
                 </label>
                 <select
                   value={formData.inStock ? 'true' : 'false'}
                   onChange={(e) => setFormData({ ...formData, inStock: e.target.value === 'true' })}
-                  className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                  className={`${inputCls} cursor-pointer`}
                 >
-                  <option value="true">In Stock (Available)</option>
-                  <option value="false">Out of Stock</option>
+                  <option value="true" className={isDark ? 'bg-[#171410] text-white' : 'bg-white text-neutral-900'}>In Stock (Available)</option>
+                  <option value="false" className={isDark ? 'bg-[#171410] text-white' : 'bg-white text-neutral-900'}>Out of Stock</option>
                 </select>
               </div>
             </div>
 
             {/* Image Upload & Selection */}
             <div>
-              <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+              <label className={labelCls}>
                 Product Image (Device Gallery / Photo or URL) *
               </label>
 
@@ -467,22 +510,30 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed border-[#b8860b]/40 hover:border-[#b8860b] bg-[#171410]/60 hover:bg-[#b8860b]/10 transition-all cursor-pointer group"
+                  className={`flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed transition-all cursor-pointer group ${
+                    isDark
+                      ? 'border-[#b8860b]/40 hover:border-[#b8860b] bg-[#171410]/60 hover:bg-[#b8860b]/10'
+                      : 'border-[#b8860b]/30 hover:border-[#b8860b] bg-[#faf8f5] hover:bg-[#b8860b]/5'
+                  }`}
                 >
                   <div className="w-10 h-10 rounded-full bg-[#b8860b]/20 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                     <Upload size={18} className="text-[#d4a017]" />
                   </div>
-                  <span className="text-xs font-semibold text-white group-hover:text-[#d4a017] transition-colors">
+                  <span className={`text-xs font-semibold group-hover:text-[#d4a017] transition-colors ${
+                    isDark ? 'text-white' : 'text-neutral-800'
+                  }`}>
                     Upload from Device / Gallery
                   </span>
-                  <span className="text-[10px] text-neutral-400 mt-0.5">
+                  <span className={`text-[10px] mt-0.5 ${isDark ? 'text-neutral-400' : 'text-neutral-500'}`}>
                     Click to choose photos from phone or computer
                   </span>
                 </button>
 
                 {/* Current Image Preview */}
                 {formData.image && (
-                  <div className="w-full sm:w-28 h-28 border border-[#b8860b]/30 bg-[#171410] relative shrink-0 overflow-hidden group">
+                  <div className={`w-full sm:w-28 h-28 border border-[#b8860b]/30 relative shrink-0 overflow-hidden group ${
+                    isDark ? 'bg-[#171410]' : 'bg-[#faf8f5]'
+                  }`}>
                     <img
                       src={formData.image}
                       alt="Preview"
@@ -507,19 +558,23 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                   placeholder="/collection-formal.jpg or https://... or base64"
-                  className="w-full px-3.5 py-2 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-xs focus:outline-none"
+                  className={inputCls}
                 />
               </div>
 
               {/* Quick Presets */}
-              <div className="flex flex-wrap gap-2 text-[11px] text-neutral-400">
-                <span className="text-neutral-500">Preset collections:</span>
+              <div className={`flex flex-wrap gap-2 text-[11px] ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                <span className={isDark ? 'text-neutral-500' : 'text-neutral-500'}>Preset collections:</span>
                 {sampleImages.map((img) => (
                   <button
                     type="button"
                     key={img.url}
                     onClick={() => setFormData({ ...formData, image: img.url })}
-                    className="px-2 py-0.5 border border-[#b8860b]/20 hover:border-[#b8860b]/60 text-[#d4a017] transition-colors text-[10px]"
+                    className={`px-2 py-0.5 border transition-colors text-[10px] cursor-pointer ${
+                      isDark
+                        ? 'border-[#b8860b]/20 hover:border-[#b8860b]/60 text-[#d4a017] bg-[#171410]/50'
+                        : 'border-[#b8860b]/30 hover:border-[#b8860b] text-[#b8860b] bg-white'
+                    }`}
                   >
                     {img.label}
                   </button>
@@ -529,7 +584,7 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
 
             {/* Color palette hexes */}
             <div>
-              <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+              <label className={labelCls}>
                 Color Swatches (comma separated hex codes)
               </label>
               <input
@@ -537,13 +592,13 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
                 value={formData.colors}
                 onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
                 placeholder="#1a237e, #37474f, #212121"
-                className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                className={inputCls}
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1">
+              <label className={labelCls}>
                 Description / Fabric Details
               </label>
               <textarea
@@ -551,25 +606,29 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Crafted with pure Egyptian cotton and hand-embroidered details..."
-                className="w-full px-3.5 py-2.5 bg-[#171410] border border-[#b8860b]/20 focus:border-[#b8860b]/60 text-white text-sm focus:outline-none"
+                className={inputCls}
               />
             </div>
 
           </div>
 
           {/* Modal Actions - Fixed Footer */}
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#b8860b]/20 bg-[#120f0c] shrink-0">
+          <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t border-[#b8860b]/20 shrink-0 ${
+            isDark ? 'bg-[#120f0c]' : 'bg-[#faf8f5]'
+          }`}>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs uppercase tracking-wider text-neutral-400 hover:text-white transition-colors"
+              className={`px-4 py-2 text-xs uppercase tracking-wider transition-colors cursor-pointer ${
+                isDark ? 'text-neutral-400 hover:text-white' : 'text-neutral-600 hover:text-neutral-900'
+              }`}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="btn-primary !py-2.5 !px-6 text-xs flex items-center gap-2"
+              className="btn-primary !py-2.5 !px-6 text-xs flex items-center gap-2 cursor-pointer"
             >
               {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
               {isEditing ? 'Save Changes' : 'Create Product'}
@@ -583,6 +642,9 @@ function ProductModal({ product, isOpen, onClose, onSave }) {
 
 // ─── Main Admin Component ───────────────────────────────────────────────────
 export default function Admin() {
+  const { theme, toggleTheme } = useTheme()
+  const isDark = theme === 'dark'
+
   const [authenticated, setAuthenticated] = useState(
     () => sessionStorage.getItem('admin_auth') === 'true'
   )
@@ -806,7 +868,7 @@ export default function Admin() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#0d0b09] text-neutral-200 antialiased">
+    <div className={`min-h-screen antialiased transition-colors duration-300 ${isDark ? 'bg-[#0d0b09] text-neutral-200' : 'bg-[#faf8f5] text-neutral-800'}`}>
       {/* Background Accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-[#b8860b]/4 rounded-full blur-[120px]" />
@@ -821,33 +883,52 @@ export default function Admin() {
               <img
                 src={companySettings.logoUrl}
                 alt={companySettings.name}
-                className="w-12 h-12 object-contain rounded border border-[#b8860b]/50 p-1 bg-[#171410]"
+                className={`w-12 h-12 object-contain rounded border border-[#b8860b]/50 p-1 ${isDark ? 'bg-[#171410]' : 'bg-[#faf8f5]'}`}
               />
             ) : (
-              <div className="w-12 h-12 border border-[#b8860b]/50 flex items-center justify-center">
+              <div className={`w-12 h-12 border border-[#b8860b]/50 flex items-center justify-center ${isDark ? 'bg-[#171410]' : 'bg-[#faf8f5]'}`}>
                 <span className="text-[#d4a017] font-serif font-bold text-2xl">
                   {companySettings?.name ? companySettings.name.charAt(0).toUpperCase() : 'Z'}
                 </span>
               </div>
             )}
             <div>
-              <h1 className="font-serif text-2xl font-bold text-white tracking-wide">
+              <h1 className={`font-serif text-2xl font-bold tracking-wide ${isDark ? 'text-white' : 'text-neutral-900'}`}>
                 {companySettings?.name || 'Zhobies Wear'} {isOwner ? 'Owner Dashboard' : 'Admin Hub'}
               </h1>
-              <p className="text-neutral-500 text-xs tracking-wide mt-0.5">
+              <p className={`text-xs tracking-wide mt-0.5 ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>
                 Logged in as <span className="text-[#d4a017] font-semibold">{currentUser}</span> ({isOwner ? 'Store Owner' : 'Administrator'}) · Company ID #{selectedCompanyId}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className={`p-2.5 glass border transition-all flex items-center gap-2 text-xs cursor-pointer ${
+                isDark
+                  ? 'border-[#b8860b]/15 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/40'
+                  : 'border-[#b8860b]/25 text-neutral-600 hover:text-[#b8860b] hover:border-[#b8860b] bg-white/80 shadow-xs'
+              }`}
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              id="admin-theme-toggle"
+            >
+              {isDark ? <Sun size={15} className="text-[#d4a017]" /> : <Moon size={15} className="text-[#b8860b]" />}
+              <span className="hidden sm:inline">{isDark ? 'Light' : 'Dark'}</span>
+            </button>
+
             <button
               onClick={() => {
                 if (activeTab === 'orders') fetchSubmissions()
                 else if (activeTab === 'products') reloadProducts()
                 else loadCompanyData(selectedCompanyId)
               }}
-              className="p-2.5 glass border border-[#b8860b]/15 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/40 transition-all flex items-center gap-2 text-xs"
+              className={`p-2.5 glass border transition-all flex items-center gap-2 text-xs cursor-pointer ${
+                isDark
+                  ? 'border-[#b8860b]/15 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/40'
+                  : 'border-[#b8860b]/25 text-neutral-600 hover:text-[#b8860b] hover:border-[#b8860b] bg-white/80 shadow-xs'
+              }`}
               title="Refresh"
               id="admin-refresh"
             >
@@ -856,7 +937,11 @@ export default function Admin() {
             </button>
             <a
               href="/"
-              className="p-2.5 glass border border-[#b8860b]/15 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/40 transition-all flex items-center gap-2 text-xs"
+              className={`p-2.5 glass border transition-all flex items-center gap-2 text-xs cursor-pointer ${
+                isDark
+                  ? 'border-[#b8860b]/15 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/40'
+                  : 'border-[#b8860b]/25 text-neutral-600 hover:text-[#b8860b] hover:border-[#b8860b] bg-white/80 shadow-xs'
+              }`}
               title="View Store"
             >
               <Shirt size={15} />
@@ -864,7 +949,11 @@ export default function Admin() {
             </a>
             <button
               onClick={logout}
-              className="p-2.5 glass border border-[#b8860b]/15 text-neutral-400 hover:text-red-400 hover:border-red-500/30 transition-all flex items-center gap-2 text-xs"
+              className={`p-2.5 glass border transition-all flex items-center gap-2 text-xs cursor-pointer ${
+                isDark
+                  ? 'border-[#b8860b]/15 text-neutral-400 hover:text-red-400 hover:border-red-500/30'
+                  : 'border-[#b8860b]/25 text-neutral-600 hover:text-red-600 hover:border-red-300 bg-white/80 shadow-xs'
+              }`}
               title="Logout"
               id="admin-logout"
             >
@@ -878,9 +967,9 @@ export default function Admin() {
         <div className="flex flex-wrap items-center gap-3 border-b border-[#b8860b]/20 pb-4 mb-8">
           <button
             onClick={() => setActiveTab('products')}
-            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${activeTab === 'products'
+            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all cursor-pointer ${activeTab === 'products'
                 ? 'bg-[#b8860b] text-white shadow-lg shadow-[#b8860b]/20'
-                : 'glass border border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017]'
+                : `glass border border-[#b8860b]/20 ${isDark ? 'text-neutral-400 hover:text-[#d4a017]' : 'text-neutral-600 hover:text-[#b8860b] bg-white/70 shadow-xs'}`
               }`}
             id="tab-products"
           >
@@ -889,9 +978,9 @@ export default function Admin() {
           </button>
           <button
             onClick={() => setActiveTab('orders')}
-            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${activeTab === 'orders'
+            className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all cursor-pointer ${activeTab === 'orders'
                 ? 'bg-[#b8860b] text-white shadow-lg shadow-[#b8860b]/20'
-                : 'glass border border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017]'
+                : `glass border border-[#b8860b]/20 ${isDark ? 'text-neutral-400 hover:text-[#d4a017]' : 'text-neutral-600 hover:text-[#b8860b] bg-white/70 shadow-xs'}`
               }`}
             id="tab-orders"
           >
@@ -904,9 +993,9 @@ export default function Admin() {
           {canAccessSettings && (
             <button
               onClick={() => setActiveTab('settings')}
-              className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all ${activeTab === 'settings'
+              className={`flex items-center gap-2.5 px-6 py-2.5 text-xs uppercase tracking-[0.2em] font-semibold transition-all cursor-pointer ${activeTab === 'settings'
                   ? 'bg-[#b8860b] text-white shadow-lg shadow-[#b8860b]/20'
-                  : 'glass border border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017]'
+                  : `glass border border-[#b8860b]/20 ${isDark ? 'text-neutral-400 hover:text-[#d4a017]' : 'text-neutral-600 hover:text-[#b8860b] bg-white/70 shadow-xs'}`
                 }`}
               id="tab-settings"
             >
@@ -927,9 +1016,11 @@ export default function Admin() {
                   <button
                     key={cat}
                     onClick={() => setProductCategoryFilter(cat)}
-                    className={`px-3.5 py-1.5 text-xs uppercase tracking-wider transition-all ${productCategoryFilter === cat
+                    className={`px-3.5 py-1.5 text-xs uppercase tracking-wider transition-all cursor-pointer ${productCategoryFilter === cat
                         ? 'bg-[#b8860b]/30 text-[#d4a017] border border-[#b8860b]'
-                        : 'bg-[#171410] text-neutral-400 border border-[#b8860b]/15 hover:border-[#b8860b]/40'
+                        : isDark
+                        ? 'bg-[#171410] text-neutral-400 border border-[#b8860b]/15 hover:border-[#b8860b]/40'
+                        : 'bg-white text-neutral-600 border border-[#b8860b]/25 hover:border-[#b8860b] shadow-xs'
                       }`}
                   >
                     {cat}
@@ -943,7 +1034,7 @@ export default function Admin() {
                   setSelectedProduct(null)
                   setIsModalOpen(true)
                 }}
-                className="btn-primary !py-2.5 !px-5 text-xs flex items-center gap-2"
+                className="btn-primary !py-2.5 !px-5 text-xs flex items-center gap-2 cursor-pointer"
                 id="add-product-btn"
               >
                 <Plus size={15} />
@@ -958,16 +1049,16 @@ export default function Admin() {
                 <span className="ml-3 text-neutral-400 text-sm">Loading products...</span>
               </div>
             ) : displayProducts.length === 0 ? (
-              <div className="text-center py-20 glass border border-[#b8860b]/20 p-8">
-                <Package size={40} className="mx-auto text-neutral-600 mb-3" />
-                <p className="font-serif text-lg text-white">No products found</p>
-                <p className="text-xs text-neutral-500 mt-1 mb-4">Click below to add your first product to the catalog.</p>
+              <div className={`text-center py-20 glass border border-[#b8860b]/20 p-8 ${isDark ? '' : 'bg-white/80 shadow-sm'}`}>
+                <Package size={40} className="mx-auto text-neutral-500 mb-3" />
+                <p className={`font-serif text-lg ${isDark ? 'text-white' : 'text-neutral-900'}`}>No products found</p>
+                <p className={`text-xs mt-1 mb-4 ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>Click below to add your first product to the catalog.</p>
                 <button
                   onClick={() => {
                     setSelectedProduct(null)
                     setIsModalOpen(true)
                   }}
-                  className="btn-primary !py-2 !px-4 text-xs"
+                  className="btn-primary !py-2 !px-4 text-xs cursor-pointer"
                 >
                   <Plus size={13} />
                   Add Product
@@ -978,11 +1069,13 @@ export default function Admin() {
                 {displayProducts.map((p) => (
                   <div
                     key={p.id}
-                    className="glass border border-[#b8860b]/20 overflow-hidden flex flex-col justify-between group hover:border-[#b8860b]/50 transition-all"
+                    className={`glass border border-[#b8860b]/20 overflow-hidden flex flex-col justify-between group hover:border-[#b8860b]/50 transition-all ${
+                      isDark ? '' : 'bg-white/90 shadow-xs'
+                    }`}
                   >
                     <div>
                       {/* Image Preview & Badges */}
-                      <div className="relative h-48 bg-[#171410] overflow-hidden">
+                      <div className={`relative h-48 overflow-hidden ${isDark ? 'bg-[#171410]' : 'bg-neutral-100'}`}>
                         <img
                           src={p.image || '/collection-formal.jpg'}
                           alt={p.name}
@@ -1007,7 +1100,9 @@ export default function Admin() {
 
                       {/* Info */}
                       <div className="p-4">
-                        <h4 className="font-serif font-bold text-base text-white group-hover:text-[#d4a017] transition-colors line-clamp-1">
+                        <h4 className={`font-serif font-bold text-base group-hover:text-[#d4a017] transition-colors line-clamp-1 ${
+                          isDark ? 'text-white' : 'text-neutral-900'
+                        }`}>
                           {p.name}
                         </h4>
                         <div className="text-[#d4a017] font-semibold text-sm mt-1">
@@ -1029,7 +1124,9 @@ export default function Admin() {
                         )}
 
                         {p.description && (
-                          <p className="text-neutral-400 text-xs mt-2.5 line-clamp-2 leading-relaxed">
+                          <p className={`text-xs mt-2.5 line-clamp-2 leading-relaxed ${
+                            isDark ? 'text-neutral-400' : 'text-neutral-600'
+                          }`}>
                             {p.description}
                           </p>
                         )}
@@ -1038,7 +1135,7 @@ export default function Admin() {
 
                     {/* Actions */}
                     <div className="p-4 pt-0 border-t border-[#b8860b]/10 mt-2 flex items-center justify-between">
-                      <span className="text-[10px] text-neutral-500 uppercase tracking-wider">
+                      <span className={`text-[10px] uppercase tracking-wider ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>
                         ID: #{p.id}
                       </span>
                       <div className="flex items-center gap-2">
@@ -1047,14 +1144,20 @@ export default function Admin() {
                             setSelectedProduct(p)
                             setIsModalOpen(true)
                           }}
-                          className="p-1.5 border border-[#b8860b]/20 text-[#d4a017] hover:bg-[#b8860b]/10 transition-colors"
+                          className={`p-1.5 border transition-colors cursor-pointer ${
+                            isDark
+                              ? 'border-[#b8860b]/20 text-[#d4a017] hover:bg-[#b8860b]/10'
+                              : 'border-[#b8860b]/30 text-[#b8860b] hover:bg-[#b8860b]/10 bg-white'
+                          }`}
                           title="Edit Product"
                         >
                           <Edit3 size={13} />
                         </button>
                         <button
                           onClick={() => handleDeleteProduct(p.id, p.name)}
-                          className="p-1.5 border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                          className={`p-1.5 border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer ${
+                            isDark ? '' : 'bg-white'
+                          }`}
                           title="Delete Product"
                         >
                           <Trash2 size={13} />
@@ -1109,9 +1212,9 @@ export default function Admin() {
                 <button
                   key={tab.key}
                   onClick={() => setFilter(tab.key)}
-                  className={`px-4 py-2 text-xs tracking-wider uppercase font-medium transition-all flex items-center gap-2 ${filter === tab.key
-                      ? 'bg-[#b8860b] text-white'
-                      : 'glass border border-[#b8860b]/15 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/30'
+                  className={`px-4 py-2 text-xs tracking-wider uppercase font-medium transition-all flex items-center gap-2 cursor-pointer ${filter === tab.key
+                      ? 'bg-[#b8860b] text-white shadow-sm'
+                      : `glass border border-[#b8860b]/15 ${isDark ? 'text-neutral-400 hover:text-[#d4a017]' : 'text-neutral-600 hover:text-[#b8860b] bg-white/70 shadow-xs'}`
                     }`}
                   id={`filter-${tab.key || 'all'}`}
                 >
@@ -1129,7 +1232,7 @@ export default function Admin() {
               <div className="flex items-center justify-center py-24">
                 <div className="flex flex-col items-center gap-3">
                   <Loader2 size={24} className="animate-spin text-[#b8860b]" />
-                  <p className="text-neutral-500 text-sm">Loading orders...</p>
+                  <p className={`text-sm ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>Loading orders...</p>
                 </div>
               </div>
             )}
@@ -1141,10 +1244,10 @@ export default function Admin() {
             )}
 
             {!ordersLoading && submissions.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-24 text-neutral-600">
+              <div className={`flex flex-col items-center justify-center py-24 ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
                 <Inbox size={48} className="mb-4 opacity-40" />
-                <p className="font-serif text-lg text-neutral-500">No orders yet</p>
-                <p className="text-xs text-neutral-600 mt-1">
+                <p className={`font-serif text-lg ${isDark ? 'text-neutral-400' : 'text-neutral-700'}`}>No orders yet</p>
+                <p className={`text-xs mt-1 ${isDark ? 'text-neutral-600' : 'text-neutral-500'}`}>
                   Orders submitted via the website will appear here
                 </p>
               </div>
@@ -1161,14 +1264,14 @@ export default function Admin() {
                   <div
                     key={sub.id}
                     className={`glass border transition-all duration-200 overflow-hidden ${isExpanded
-                        ? 'border-[#b8860b]/40 shadow-lg shadow-black/40'
+                        ? `border-[#b8860b]/40 ${isDark ? 'shadow-lg shadow-black/40' : 'shadow-md shadow-neutral-300/40'}`
                         : 'border-[#b8860b]/10 hover:border-[#b8860b]/25'
-                      }`}
+                      } ${isDark ? '' : 'bg-white/90 shadow-xs'}`}
                   >
                     {/* Header Row */}
                     <button
                       onClick={() => toggleExpand(sub.id)}
-                      className="w-full p-5 text-left flex items-center justify-between gap-4 group"
+                      className="w-full p-5 text-left flex items-center justify-between gap-4 group cursor-pointer"
                     >
                       <div className="flex items-center gap-4 min-w-0">
                         {/* Status Dot */}
@@ -1184,14 +1287,16 @@ export default function Admin() {
                         {/* Customer Info */}
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <span className="font-serif font-bold text-white text-base group-hover:text-[#d4a017] transition-colors">
+                            <span className={`font-serif font-bold text-base group-hover:text-[#d4a017] transition-colors ${
+                              isDark ? 'text-white' : 'text-neutral-900'
+                            }`}>
                               {sub.name}
                             </span>
                             <span className={`px-2 py-0.5 text-[10px] tracking-wider uppercase border font-medium ${cfg.classes}`}>
                               {cfg.label}
                             </span>
                           </div>
-                          <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500">
+                          <div className={`flex flex-wrap items-center gap-3 text-xs ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>
                             <span>{icon} {sub.projectType}</span>
                             <span>·</span>
                             <span className="flex items-center gap-1">
@@ -1213,10 +1318,12 @@ export default function Admin() {
                       <div className="border-t border-[#b8860b]/15 px-6 pb-6 pt-5">
                         <div className="grid sm:grid-cols-2 gap-3 mb-4">
                           {/* Email */}
-                          <div className="flex items-center gap-3 p-3 bg-[#171410] border border-[#b8860b]/10">
+                          <div className={`flex items-center gap-3 p-3 border ${
+                            isDark ? 'bg-[#171410] border-[#b8860b]/10' : 'bg-[#faf8f5] border-[#b8860b]/20 shadow-xs'
+                          }`}>
                             <Mail size={14} className="text-[#b8860b] shrink-0" />
                             <div className="min-w-0">
-                              <div className="text-[10px] text-neutral-600 uppercase tracking-wider mb-0.5">Email</div>
+                              <div className={`text-[10px] uppercase tracking-wider mb-0.5 ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>Email</div>
                               <a
                                 href={`mailto:${sub.email}?subject=Re:%20Your%20Order%20at%20Zohaibies%20Wear`}
                                 className="text-sm text-[#d4a017] hover:underline break-all"
@@ -1228,15 +1335,17 @@ export default function Admin() {
 
                           {/* WhatsApp */}
                           {sub.phone && (
-                            <div className="flex items-center gap-3 p-3 bg-[#171410] border border-[#b8860b]/10">
-                              <Phone size={14} className="text-green-400 shrink-0" />
+                            <div className={`flex items-center gap-3 p-3 border ${
+                              isDark ? 'bg-[#171410] border-[#b8860b]/10' : 'bg-[#faf8f5] border-[#b8860b]/20 shadow-xs'
+                            }`}>
+                              <Phone size={14} className="text-green-500 shrink-0" />
                               <div>
-                                <div className="text-[10px] text-neutral-600 uppercase tracking-wider mb-0.5">WhatsApp</div>
+                                <div className={`text-[10px] uppercase tracking-wider mb-0.5 ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>WhatsApp</div>
                                 <a
                                   href={`https://wa.me/${sub.phone.replace(/[^0-9]/g, '')}?text=Hi%20${encodeURIComponent(sub.name)}!%20Regarding%20your%20order%20at%20Zohaibies%20Wear...`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-green-400 hover:underline"
+                                  className="text-sm text-green-500 hover:underline"
                                 >
                                   {sub.phone}
                                 </a>
@@ -1245,47 +1354,53 @@ export default function Admin() {
                           )}
 
                           {/* Order Type */}
-                          <div className="flex items-center gap-3 p-3 bg-[#171410] border border-[#b8860b]/10">
+                          <div className={`flex items-center gap-3 p-3 border ${
+                            isDark ? 'bg-[#171410] border-[#b8860b]/10' : 'bg-[#faf8f5] border-[#b8860b]/20 shadow-xs'
+                          }`}>
                             <Package size={14} className="text-[#b8860b] shrink-0" />
                             <div>
-                              <div className="text-[10px] text-neutral-600 uppercase tracking-wider mb-0.5">Order Type</div>
-                              <span className="text-sm text-neutral-300">{icon} {sub.projectType}</span>
+                              <div className={`text-[10px] uppercase tracking-wider mb-0.5 ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>Order Type</div>
+                              <span className={`text-sm ${isDark ? 'text-neutral-300' : 'text-neutral-800'}`}>{icon} {sub.projectType}</span>
                             </div>
                           </div>
 
                           {/* Date */}
-                          <div className="flex items-center gap-3 p-3 bg-[#171410] border border-[#b8860b]/10">
+                          <div className={`flex items-center gap-3 p-3 border ${
+                            isDark ? 'bg-[#171410] border-[#b8860b]/10' : 'bg-[#faf8f5] border-[#b8860b]/20 shadow-xs'
+                          }`}>
                             <Calendar size={14} className="text-[#b8860b] shrink-0" />
                             <div>
-                              <div className="text-[10px] text-neutral-600 uppercase tracking-wider mb-0.5">Submitted</div>
-                              <span className="text-sm text-neutral-300">{formatDate(sub.createdAt)}</span>
+                              <div className={`text-[10px] uppercase tracking-wider mb-0.5 ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>Submitted</div>
+                              <span className={`text-sm ${isDark ? 'text-neutral-300' : 'text-neutral-800'}`}>{formatDate(sub.createdAt)}</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Customer Message */}
-                        <div className="p-4 bg-[#171410] border border-[#b8860b]/10 mb-4">
+                        <div className={`p-4 border mb-4 ${
+                          isDark ? 'bg-[#171410] border-[#b8860b]/10' : 'bg-[#faf8f5] border-[#b8860b]/20 shadow-xs'
+                        }`}>
                           <div className="flex items-center gap-2 mb-2">
                             <MessageSquare size={13} className="text-[#b8860b]" />
-                            <span className="text-[10px] text-neutral-600 uppercase tracking-wider">
+                            <span className={`text-[10px] uppercase tracking-wider ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>
                               Customer Message
                             </span>
                           </div>
-                          <p className="text-neutral-300 text-sm leading-relaxed whitespace-pre-wrap">
+                          <p className={`text-sm leading-relaxed whitespace-pre-wrap ${isDark ? 'text-neutral-300' : 'text-neutral-800'}`}>
                             {sub.message}
                           </p>
                         </div>
 
                         {/* Action Buttons */}
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-[10px] text-neutral-600 uppercase tracking-wider mr-2">
+                          <span className={`text-[10px] uppercase tracking-wider mr-2 ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>
                             Update Status:
                           </span>
 
                           {sub.status !== 'new' && (
                             <button
                               onClick={() => updateStatus(sub.id, 'new')}
-                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-[#b8860b]/30 text-[#b8860b] hover:bg-[#b8860b]/10 transition-all"
+                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-[#b8860b]/30 text-[#b8860b] hover:bg-[#b8860b]/10 transition-all cursor-pointer"
                             >
                               <Star size={11} />
                               Mark New
@@ -1294,7 +1409,7 @@ export default function Admin() {
                           {sub.status !== 'read' && (
                             <button
                               onClick={() => updateStatus(sub.id, 'read')}
-                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all"
+                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 transition-all cursor-pointer"
                             >
                               <Eye size={11} />
                               In Progress
@@ -1303,7 +1418,7 @@ export default function Admin() {
                           {sub.status !== 'archived' && (
                             <button
                               onClick={() => updateStatus(sub.id, 'archived')}
-                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-green-500/30 text-green-400 hover:bg-green-500/10 transition-all"
+                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-green-500/30 text-green-400 hover:bg-green-500/10 transition-all cursor-pointer"
                             >
                               <CheckCircle size={11} />
                               Mark Fulfilled
@@ -1314,7 +1429,11 @@ export default function Admin() {
                           <div className="ml-auto flex gap-2">
                             <a
                               href={`mailto:${sub.email}?subject=Your%20Order%20at%20Zohaibies%20Wear`}
-                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/40 transition-all"
+                              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs border transition-all cursor-pointer ${
+                                isDark
+                                  ? 'border-[#b8860b]/20 text-neutral-400 hover:text-[#d4a017] hover:border-[#b8860b]/40'
+                                  : 'border-[#b8860b]/30 text-neutral-600 hover:text-[#b8860b] hover:border-[#b8860b] bg-white'
+                              }`}
                             >
                               <Mail size={11} />
                               Email
@@ -1324,7 +1443,11 @@ export default function Admin() {
                                 href={`https://wa.me/${sub.phone.replace(/[^0-9]/g, '')}?text=Hi%20${encodeURIComponent(sub.name)}!%20This%20is%20Zohaibies%20Wear%20regarding%20your%20order%20enquiry.`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-green-500/20 text-neutral-400 hover:text-green-400 hover:border-green-500/30 transition-all"
+                                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs border transition-all cursor-pointer ${
+                                  isDark
+                                    ? 'border-green-500/20 text-neutral-400 hover:text-green-400 hover:border-green-500/30'
+                                    : 'border-green-600/30 text-green-700 hover:text-green-800 hover:border-green-600 bg-white'
+                                }`}
                               >
                                 <Phone size={11} />
                                 WhatsApp
@@ -1345,20 +1468,22 @@ export default function Admin() {
         {activeTab === 'settings' && canAccessSettings && (
           <div className="space-y-8 animate-fade-in">
             {/* Header / Company ID Selector */}
-            <div className="glass border border-[#b8860b]/20 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className={`glass border border-[#b8860b]/20 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+              isDark ? '' : 'bg-white/90 shadow-xs'
+            }`}>
               <div>
-                <h2 className="font-serif text-xl font-bold text-white flex items-center gap-2.5">
+                <h2 className={`font-serif text-xl font-bold flex items-center gap-2.5 ${isDark ? 'text-white' : 'text-neutral-900'}`}>
                   <Building size={20} className="text-[#d4a017]" />
                   Website & Company Configuration
                 </h2>
-                <p className="text-neutral-400 text-xs mt-1">
+                <p className={`text-xs mt-1 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                   Manage website branding, company table records, and logo synchronized directly with Neon PostgreSQL.
                 </p>
               </div>
 
               {/* Company ID selector for multi-company support */}
               <div className="flex items-center gap-3">
-                <label className="text-xs uppercase tracking-wider text-neutral-400 font-medium">
+                <label className={`text-xs uppercase tracking-wider font-medium ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                   Active Company ID:
                 </label>
                 <div className="flex items-center gap-1.5">
@@ -1370,9 +1495,11 @@ export default function Admin() {
                         setSelectedCompanyId(cid)
                         loadCompanyData(cid)
                       }}
-                      className={`px-3 py-1 text-xs font-mono font-bold transition-all border ${selectedCompanyId === cid
+                      className={`px-3 py-1 text-xs font-mono font-bold transition-all border cursor-pointer ${selectedCompanyId === cid
                           ? 'bg-[#b8860b] text-white border-[#b8860b]'
-                          : 'glass text-neutral-400 border-[#b8860b]/20 hover:border-[#b8860b]/50 hover:text-white'
+                          : isDark
+                          ? 'glass text-neutral-400 border-[#b8860b]/20 hover:border-[#b8860b]/50 hover:text-white'
+                          : 'bg-white text-neutral-600 border-[#b8860b]/30 hover:border-[#b8860b] hover:text-neutral-900 shadow-xs'
                         }`}
                     >
                       #{cid}
@@ -1384,13 +1511,13 @@ export default function Admin() {
 
             {/* Notification Badges */}
             {settingsSaved && (
-              <div className="p-4 bg-green-500/15 border border-green-500/30 text-green-400 text-sm flex items-center gap-3">
+              <div className="p-4 bg-green-500/15 border border-green-500/30 text-green-500 text-sm flex items-center gap-3">
                 <CheckCircle size={18} />
                 <span>Company information for <strong>ID #{selectedCompanyId}</strong> saved and updated across website!</span>
               </div>
             )}
             {settingsError && (
-              <div className="p-4 bg-red-500/15 border border-red-500/30 text-red-400 text-sm flex items-center gap-3">
+              <div className="p-4 bg-red-500/15 border border-red-500/30 text-red-500 text-sm flex items-center gap-3">
                 <X size={18} />
                 <span>{settingsError}</span>
               </div>
@@ -1399,20 +1526,26 @@ export default function Admin() {
             {/* Settings Form */}
             <form onSubmit={handleSaveSettings} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Left Column: Logo & Branding Preview */}
-              <div className="glass border border-[#b8860b]/20 p-6 space-y-6">
-                <h3 className="font-serif text-base font-semibold text-white flex items-center gap-2 border-b border-[#b8860b]/15 pb-3">
+              <div className={`glass border border-[#b8860b]/20 p-6 space-y-6 ${isDark ? '' : 'bg-white/90 shadow-xs'}`}>
+                <h3 className={`font-serif text-base font-semibold flex items-center gap-2 border-b border-[#b8860b]/15 pb-3 ${
+                  isDark ? 'text-white' : 'text-neutral-900'
+                }`}>
                   <ImageIcon size={16} className="text-[#d4a017]" />
                   Website Logo
                 </h3>
 
                 {/* Logo Preview Display */}
-                <div className="flex flex-col items-center justify-center p-6 border border-dashed border-[#b8860b]/30 bg-[#171410]/50 rounded text-center">
+                <div className={`flex flex-col items-center justify-center p-6 border border-dashed rounded text-center ${
+                  isDark ? 'border-[#b8860b]/30 bg-[#171410]/50' : 'border-[#b8860b]/30 bg-[#faf8f5]'
+                }`}>
                   {logoPreview ? (
                     <div className="relative group">
                       <img
                         src={logoPreview}
                         alt="Logo Preview"
-                        className="w-28 h-28 object-contain rounded border border-[#b8860b]/40 bg-[#0d0b09] p-2 mb-3"
+                        className={`w-28 h-28 object-contain rounded border border-[#b8860b]/40 p-2 mb-3 ${
+                          isDark ? 'bg-[#0d0b09]' : 'bg-white shadow-xs'
+                        }`}
                       />
                       <button
                         type="button"
@@ -1420,28 +1553,32 @@ export default function Admin() {
                           setLogoPreview('')
                           setCompanySettings((prev) => ({ ...prev, logoUrl: '' }))
                         }}
-                        className="absolute -top-2 -right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-500 transition-colors shadow"
+                        className="absolute -top-2 -right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-500 transition-colors shadow cursor-pointer"
                         title="Remove Logo"
                       >
                         <X size={14} />
                       </button>
                     </div>
                   ) : (
-                    <div className="w-24 h-24 border border-[#b8860b]/50 flex items-center justify-center text-[#d4a017] font-serif font-bold text-3xl mb-3 bg-[#0d0b09]">
+                    <div className={`w-24 h-24 border border-[#b8860b]/50 flex items-center justify-center text-[#d4a017] font-serif font-bold text-3xl mb-3 ${
+                      isDark ? 'bg-[#0d0b09]' : 'bg-white shadow-xs'
+                    }`}>
                       {companySettings?.name ? companySettings.name.charAt(0).toUpperCase() : 'Z'}
                     </div>
                   )}
-                  <p className="text-neutral-400 text-xs">
+                  <p className={`text-xs ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                     {logoPreview ? 'Custom logo uploaded' : 'Default monogram will be rendered'}
                   </p>
                 </div>
 
                 {/* File Upload Input */}
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-2">
+                  <label className={`block text-xs uppercase tracking-wider mb-2 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                     Upload Logo Image
                   </label>
-                  <label className="flex items-center justify-center gap-2 px-4 py-2.5 glass border border-[#b8860b]/30 text-neutral-300 hover:text-[#d4a017] hover:border-[#b8860b] cursor-pointer transition-all text-xs">
+                  <label className={`flex items-center justify-center gap-2 px-4 py-2.5 glass border border-[#b8860b]/30 cursor-pointer transition-all text-xs ${
+                    isDark ? 'text-neutral-300 hover:text-[#d4a017] hover:border-[#b8860b]' : 'bg-white text-neutral-700 hover:text-[#b8860b] hover:border-[#b8860b] shadow-xs'
+                  }`}>
                     <Upload size={14} />
                     <span>Choose File (PNG, JPG, SVG, WebP)</span>
                     <input
@@ -1455,7 +1592,7 @@ export default function Admin() {
 
                 {/* Direct Image URL input */}
                 <div>
-                  <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                  <label className={`block text-xs uppercase tracking-wider mb-1.5 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                     Or Enter Image / Logo URL
                   </label>
                   <input
@@ -1467,16 +1604,20 @@ export default function Admin() {
                       setLogoPreview(val)
                     }}
                     placeholder="https://example.com/logo.png"
-                    className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                    className={`w-full border px-3.5 py-2.5 text-xs transition-all focus:outline-none rounded-none ${
+                      isDark
+                        ? 'bg-[#171410] border-[#b8860b]/20 focus:border-[#d4a017] text-white placeholder-neutral-600'
+                        : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+                    }`}
                   />
                 </div>
 
                 {/* Live Brand Preview Card */}
                 <div className="border-t border-[#b8860b]/15 pt-4">
-                  <label className="block text-[11px] uppercase tracking-wider text-neutral-500 mb-2 font-medium">
+                  <label className={`block text-[11px] uppercase tracking-wider mb-2 font-medium ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>
                     Navbar Preview (Company ID #{selectedCompanyId})
                   </label>
-                  <div className="p-3 bg-[#0d0b09] border border-[#b8860b]/25 flex items-center gap-3">
+                  <div className={`p-3 border border-[#b8860b]/25 flex items-center gap-3 ${isDark ? 'bg-[#0d0b09]' : 'bg-[#faf8f5]'}`}>
                     {logoPreview ? (
                       <img
                         src={logoPreview}
@@ -1489,7 +1630,7 @@ export default function Admin() {
                       </div>
                     )}
                     <div className="flex flex-col leading-tight">
-                      <span className="font-serif font-bold text-sm text-white tracking-wide">
+                      <span className={`font-serif font-bold text-sm tracking-wide ${isDark ? 'text-white' : 'text-neutral-900'}`}>
                         {companySettings?.name || 'Zhobies Wear'}
                       </span>
                       <span className="text-[#b8860b] text-[8px] tracking-[0.2em] uppercase font-medium">
@@ -1501,8 +1642,10 @@ export default function Admin() {
               </div>
 
               {/* Right Column: Company Information Fields */}
-              <div className="lg:col-span-2 glass border border-[#b8860b]/20 p-6 space-y-6">
-                <h3 className="font-serif text-base font-semibold text-white flex items-center gap-2 border-b border-[#b8860b]/15 pb-3">
+              <div className={`lg:col-span-2 glass border border-[#b8860b]/20 p-6 space-y-6 ${isDark ? '' : 'bg-white/90 shadow-xs'}`}>
+                <h3 className={`font-serif text-base font-semibold flex items-center gap-2 border-b border-[#b8860b]/15 pb-3 ${
+                  isDark ? 'text-white' : 'text-neutral-900'
+                }`}>
                   <Building size={16} className="text-[#d4a017]" />
                   Company Table Details (ID #{selectedCompanyId})
                 </h3>
@@ -1510,7 +1653,7 @@ export default function Admin() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Website / Company Name */}
                   <div className="md:col-span-2">
-                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5 font-medium">
+                    <label className={`block text-xs uppercase tracking-wider mb-1.5 font-medium ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                       Website Name <span className="text-[#d4a017]">*</span>
                     </label>
                     <input
@@ -1521,16 +1664,20 @@ export default function Admin() {
                         setCompanySettings((prev) => ({ ...prev, name: e.target.value }))
                       }
                       placeholder="e.g. Zhobies Wear"
-                      className="w-full bg-[#171410] border border-[#b8860b]/30 px-4 py-2.5 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all font-serif"
+                      className={`w-full border px-4 py-2.5 text-sm transition-all focus:outline-none rounded-none font-serif ${
+                        isDark
+                          ? 'bg-[#171410] border-[#b8860b]/30 focus:border-[#d4a017] text-white placeholder-neutral-600'
+                          : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+                      }`}
                     />
-                    <p className="text-[11px] text-neutral-500 mt-1">
+                    <p className={`text-[11px] mt-1 ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>
                       Current website name: <strong>Zhobies Wear</strong>. Changing this will immediately reflect across the Navbar, Footer, and Admin panel.
                     </p>
                   </div>
 
                   {/* Tagline / Subtitle */}
                   <div className="md:col-span-2">
-                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                    <label className={`block text-xs uppercase tracking-wider mb-1.5 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                       Brand Tagline / Subtitle
                     </label>
                     <input
@@ -1540,13 +1687,17 @@ export default function Admin() {
                         setCompanySettings((prev) => ({ ...prev, tagline: e.target.value }))
                       }
                       placeholder="e.g. Premium Clothing & Tailoring"
-                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                      className={`w-full border px-3.5 py-2.5 text-xs transition-all focus:outline-none rounded-none ${
+                        isDark
+                          ? 'bg-[#171410] border-[#b8860b]/20 focus:border-[#d4a017] text-white placeholder-neutral-600'
+                          : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+                      }`}
                     />
                   </div>
 
                   {/* Contact Email */}
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                    <label className={`block text-xs uppercase tracking-wider mb-1.5 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                       Contact Email
                     </label>
                     <input
@@ -1556,13 +1707,17 @@ export default function Admin() {
                         setCompanySettings((prev) => ({ ...prev, email: e.target.value }))
                       }
                       placeholder="contact@zhobieswear.com"
-                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                      className={`w-full border px-3.5 py-2.5 text-xs transition-all focus:outline-none rounded-none ${
+                        isDark
+                          ? 'bg-[#171410] border-[#b8860b]/20 focus:border-[#d4a017] text-white placeholder-neutral-600'
+                          : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+                      }`}
                     />
                   </div>
 
                   {/* Contact Phone / WhatsApp */}
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                    <label className={`block text-xs uppercase tracking-wider mb-1.5 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                       Phone Number / WhatsApp
                     </label>
                     <input
@@ -1572,13 +1727,17 @@ export default function Admin() {
                         setCompanySettings((prev) => ({ ...prev, phone: e.target.value }))
                       }
                       placeholder="+92 300 1234567"
-                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                      className={`w-full border px-3.5 py-2.5 text-xs transition-all focus:outline-none rounded-none ${
+                        isDark
+                          ? 'bg-[#171410] border-[#b8860b]/20 focus:border-[#d4a017] text-white placeholder-neutral-600'
+                          : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+                      }`}
                     />
                   </div>
 
                   {/* Physical Address */}
                   <div className="md:col-span-2">
-                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                    <label className={`block text-xs uppercase tracking-wider mb-1.5 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                       Physical Store Address
                     </label>
                     <input
@@ -1588,13 +1747,17 @@ export default function Admin() {
                         setCompanySettings((prev) => ({ ...prev, address: e.target.value }))
                       }
                       placeholder="Commercial Market, Lahore, Pakistan"
-                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all"
+                      className={`w-full border px-3.5 py-2.5 text-xs transition-all focus:outline-none rounded-none ${
+                        isDark
+                          ? 'bg-[#171410] border-[#b8860b]/20 focus:border-[#d4a017] text-white placeholder-neutral-600'
+                          : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+                      }`}
                     />
                   </div>
 
                   {/* Brand Description / About snippet */}
                   <div className="md:col-span-2">
-                    <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5">
+                    <label className={`block text-xs uppercase tracking-wider mb-1.5 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
                       Store Description (Shown in Footer)
                     </label>
                     <textarea
@@ -1604,20 +1767,24 @@ export default function Admin() {
                         setCompanySettings((prev) => ({ ...prev, description: e.target.value }))
                       }
                       placeholder="Write brief description of your clothing store..."
-                      className="w-full bg-[#171410] border border-[#b8860b]/20 px-3.5 py-2.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4a017] transition-all resize-none"
+                      className={`w-full border px-3.5 py-2.5 text-xs transition-all focus:outline-none rounded-none resize-none ${
+                        isDark
+                          ? 'bg-[#171410] border-[#b8860b]/20 focus:border-[#d4a017] text-white placeholder-neutral-600'
+                          : 'bg-white border-[#b8860b]/30 focus:border-[#b8860b] text-neutral-900 placeholder-neutral-400'
+                      }`}
                     />
                   </div>
                 </div>
 
                 {/* Action Bar */}
                 <div className="pt-4 border-t border-[#b8860b]/15 flex items-center justify-between">
-                  <div className="text-[11px] text-neutral-500">
+                  <div className={`text-[11px] ${isDark ? 'text-neutral-500' : 'text-neutral-600'}`}>
                     Target database table: <code className="text-[#d4a017]">company</code> (record id = {selectedCompanyId})
                   </div>
                   <button
                     type="submit"
                     disabled={settingsLoading}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-[#b8860b] hover:bg-[#d4a017] text-white text-xs font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-[#b8860b] hover:bg-[#d4a017] text-white text-xs font-semibold uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer"
                   >
                     {settingsLoading ? (
                       <>
