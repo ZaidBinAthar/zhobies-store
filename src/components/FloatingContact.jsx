@@ -3,7 +3,7 @@ const WHATSAPP_NUMBER = '923247201988'
 export default function FloatingContact() {
   return (
     <a
-      href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi!%20I%20want%20to%20order%20from%20Zohaibies%20Wear.`}
+      href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi!%20I%20want%20to%20order%20from%20BinAfzal%20Wears.`}
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 right-6 z-50 group"

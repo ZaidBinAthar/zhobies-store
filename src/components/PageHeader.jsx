@@ -3,7 +3,7 @@ import { ChevronRight, Sparkles } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 
 export default function PageHeader({
-  badge = 'Zhobie\'s Store',
+  badge = 'BinAfzal Wears',
   title,
   highlight,
   description,

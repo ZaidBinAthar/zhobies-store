@@ -222,7 +222,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'login', onAu
             {mode === 'signup'
               ? step === 'otp'
                 ? `Enter the 6-digit verification code sent to ${email}`
-                : 'Sign up to manage your orders & profile on Zhobies Wear'
+                : 'Sign up to manage your orders & profile on BinAfzal Wears'
               : 'Sign in with your Neon database credentials'}
           </p>
         </div>

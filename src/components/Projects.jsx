@@ -24,7 +24,7 @@ const testimonials = [
   {
     name: 'Usman Malik',
     city: 'Islamabad',
-    text: 'Fast delivery and beautiful packaging. The casual hoodie set is exactly as shown. Very satisfied with Zohaibies Wear!',
+    text: 'Fast delivery and beautiful packaging. The casual hoodie set is exactly as shown. Very satisfied with BinAfzal Wears!',
     rating: 5,
   },
 ]
@@ -48,7 +48,7 @@ export default function Projects() {
               <span className="gradient-text">Passion</span>
             </h2>
             <p className="text-neutral-400 text-lg leading-relaxed mb-5">
-              Zohaibies Wear was born from a passion for premium quality clothing
+              BinAfzal Wears was born from a passion for premium quality clothing
               at accessible prices. We believe every man deserves to look his best —
               whether at the office, a family gathering, or a festive celebration.
             </p>

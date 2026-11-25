@@ -11,16 +11,25 @@ export const DEFAULT_COMPANY_ID = 1
 
 export const DEFAULT_COMPANY = {
   id: DEFAULT_COMPANY_ID,
-  name: 'Zhobies Wear',
+  name: 'BinAfzal Wears',
   tagline: 'Premium Clothing & Tailoring',
   logoUrl: '',
   phone: '+92 300 1234567',
-  email: 'zhobieswear@gmail.com',
+  email: 'binafzalwears@gmail.com',
   address: 'Commercial Market, Lahore, Pakistan',
   description: 'Premium clothing for every occasion — crafted with passion, delivered with care. Elevating modern fashion, one garment at a time.'
 }
 
 const STORAGE_KEY = 'company_settings_cache'
+
+const LEGACY_NAMES = [
+  'Zhobies Wear',
+  "Zhobie's Wear",
+  "Zhobie’s Wear",
+  "Zhobie's Store",
+  "Zhobie’s Store",
+  'Zohaibies Wear'
+]
 
 export function getLocalCompany() {
   try {
@@ -28,6 +37,11 @@ export function getLocalCompany() {
     if (raw) {
       const parsed = JSON.parse(raw)
       if (parsed && parsed.name) {
+        if (LEGACY_NAMES.includes(parsed.name)) {
+          parsed.name = 'BinAfzal Wears'
+          if (parsed.email === 'zhobieswear@gmail.com') parsed.email = 'binafzalwears@gmail.com'
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed))
+        }
         return { ...DEFAULT_COMPANY, ...parsed }
       }
     }
@@ -83,13 +97,15 @@ export async function fetchCompany(companyId = DEFAULT_COMPANY_ID) {
 
     if (Array.isArray(rows) && rows.length > 0) {
       const row = rows[0]
+      const rawName = row.name || DEFAULT_COMPANY.name
+      const normalizedName = LEGACY_NAMES.includes(rawName) ? 'BinAfzal Wears' : rawName
       const companyData = {
         id: row.id,
-        name: row.name || DEFAULT_COMPANY.name,
+        name: normalizedName,
         tagline: row.tagline || '',
         logoUrl: row.logo_url || '',
         phone: row.phone || '',
-        email: row.email || '',
+        email: row.email === 'zhobieswear@gmail.com' ? 'binafzalwears@gmail.com' : (row.email || ''),
         address: row.address || '',
         description: row.description || '',
         updatedAt: row.updated_at

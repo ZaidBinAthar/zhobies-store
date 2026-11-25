@@ -27,7 +27,7 @@ export default function WhyWorkWithMe() {
             <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#b8860b]" />
           </div>
           <h2 className="font-serif text-4xl sm:text-5xl font-bold text-white mb-3">
-            The <span className="gradient-text">Zohaibies</span> Difference
+            The <span className="gradient-text">BinAfzal</span> Difference
           </h2>
           <div className="gold-divider mt-4" />
         </div>

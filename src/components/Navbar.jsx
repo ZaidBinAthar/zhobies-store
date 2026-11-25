@@ -57,8 +57,8 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  const companyName = company?.name || 'Zhobie’s Store'
-  const logoLetter = companyName.trim().charAt(0).toUpperCase() || 'Z'
+  const companyName = company?.name || 'BinAfzal Wears'
+  const logoLetter = companyName.trim().charAt(0).toUpperCase() || 'B'
   const logoUrl = company?.logoUrl
 
   const nameParts = companyName.split(' ')

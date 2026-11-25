@@ -15,7 +15,7 @@ export default function Hero() {
       <div className="absolute inset-0">
         <img
           src="/hero-fashion.jpg"
-          alt="Zhobie’s Store Collection"
+          alt="BinAfzal Wears Collection"
           className="w-full h-full object-cover object-center"
         />
         <div className={`absolute inset-0 ${

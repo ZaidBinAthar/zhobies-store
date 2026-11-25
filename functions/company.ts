@@ -58,11 +58,11 @@ export default async function companyHandler(req: Request): Promise<Response> {
         success: true,
         data: {
           id: companyId,
-          name: "Zhobies Wear",
+          name: "BinAfzal Wears",
           tagline: "Premium Clothing & Tailoring",
           logo_url: "",
           phone: "+92 300 1234567",
-          email: "zhobieswear@gmail.com",
+          email: "binafzalwears@gmail.com",
           address: "Commercial Market, Lahore, Pakistan",
           description: "Premium clothing for every occasion — crafted with passion, delivered with care."
         }
@@ -73,7 +73,7 @@ export default async function companyHandler(req: Request): Promise<Response> {
     if (req.method === "POST" || req.method === "PUT") {
       const body = await req.json();
       const targetId = body.companyId || body.id || companyId || 1;
-      const name = body.name || "Zhobies Wear";
+      const name = body.name || "BinAfzal Wears";
       const tagline = body.tagline || "";
       const logoUrl = body.logoUrl || body.logo_url || "";
       const phone = body.phone || "";

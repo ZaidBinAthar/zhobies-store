@@ -244,14 +244,14 @@ export default function Contact() {
                   {
                     icon: InstagramIcon,
                     label: 'Instagram',
-                    value: '@zohaibieswear',
+                    value: '@binafzalwears',
                     href: 'https://www.instagram.com/zaidiprox/',
                     color: 'hover:text-pink-400 hover:border-pink-400/30',
                   },
                   {
                     icon: FacebookIcon,
                     label: 'Facebook',
-                    value: 'Zohaibies Wear',
+                    value: 'BinAfzal Wears',
                     href: 'https://www.facebook.com/zaidiprox',
                     color: 'hover:text-blue-400 hover:border-blue-400/30',
                   },

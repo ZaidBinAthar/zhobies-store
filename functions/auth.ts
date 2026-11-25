@@ -38,12 +38,12 @@ async function sendOtpEmail(email: string, otp: string) {
   }
 
   const resend = new Resend(apiKey);
-  const fromEmail = process.env.RESEND_FROM_EMAIL || "Zhobie's Wear <onboarding@resend.dev>";
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "BinAfzal Wears <onboarding@resend.dev>";
 
   return await resend.emails.send({
     from: fromEmail,
     to: email,
-    subject: `${otp} is your Zhobie's Store verification code`,
+    subject: `${otp} is your BinAfzal Wears verification code`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -57,7 +57,7 @@ async function sendOtpEmail(email: string, otp: string) {
           <tr>
             <td style="padding: 36px 36px 24px; text-align: center; border-bottom: 1px solid rgba(184, 134, 11, 0.15);">
               <h1 style="margin: 0; font-family: Georgia, serif; font-size: 26px; color: #d4a017; letter-spacing: 2px; text-transform: uppercase;">
-                ZHOBIE'S STORE
+                BINAFZAL WEARS
               </h1>
               <p style="margin: 8px 0 0; font-size: 11px; letter-spacing: 3px; color: #a3a3a3; text-transform: uppercase;">
                 Bespoke & Ready-to-Wear Elegance
@@ -70,7 +70,7 @@ async function sendOtpEmail(email: string, otp: string) {
                 Verify Your Email Address
               </h2>
               <p style="margin: 0 0 24px; font-size: 14px; line-height: 1.6; color: #a3a3a3;">
-                Thank you for registering with Zhobie's Store. Please use the following six-digit verification code to complete your registration.
+                Thank you for registering with BinAfzal Wears. Please use the following six-digit verification code to complete your registration.
               </p>
               
               <div style="background-color: #0d0b09; border: 1px dashed #b8860b; border-radius: 4px; padding: 22px; text-align: center; margin: 28px 0;">
@@ -89,7 +89,7 @@ async function sendOtpEmail(email: string, otp: string) {
           </tr>
           <tr>
             <td style="padding: 24px 36px; background-color: #0d0b09; border-top: 1px solid rgba(184, 134, 11, 0.15); text-align: center; font-size: 11px; color: #737373;">
-              © ${new Date().getFullYear()} Zhobie's Store. All rights reserved.
+              © ${new Date().getFullYear()} BinAfzal Wears. All rights reserved.
             </td>
           </tr>
         </table>

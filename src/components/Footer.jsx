@@ -49,8 +49,8 @@ export default function Footer() {
   const { company } = useCompany()
   const isDark = theme === 'dark'
 
-  const companyName = company?.name || 'Zhobie’s Store'
-  const logoLetter = companyName.trim().charAt(0).toUpperCase() || 'Z'
+  const companyName = company?.name || 'BinAfzal Wears'
+  const logoLetter = companyName.trim().charAt(0).toUpperCase() || 'B'
   const logoUrl = company?.logoUrl
   const nameParts = companyName.split(' ')
   const firstNamePart = nameParts[0] || companyName
