@@ -37,7 +37,7 @@ const testimonials = [
     name: 'Usman Malik',
     city: 'Islamabad',
     role: 'Tech Founder',
-    text: 'From the fleece hoodie set to my bespoke blazers, Zhobie’s Store delivers exceptional consistency. Delivery was on time and packaging felt truly regal.',
+    text: 'From the fleece hoodie set to my bespoke blazers, BinAfzal Wears delivers exceptional consistency. Delivery was on time and packaging felt truly regal.',
     rating: 5,
   },
 ]
@@ -48,7 +48,7 @@ export default function About() {
   const [unit, setUnit] = useState('inches') // 'inches' or 'cm'
   const isDark = theme === 'dark'
 
-  const companyName = company?.name || 'Zhobie\'s Store'
+  const companyName = company?.name || 'BinAfzal Wears'
 
   return (
     <div className="min-h-screen">
@@ -110,7 +110,7 @@ export default function About() {
               <div className="relative h-[480px] overflow-hidden">
                 <img
                   src="/hero-fashion.jpg"
-                  alt="Zhobie's Store Master Tailoring"
+                  alt="BinAfzal Wears Master Tailoring"
                   className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
