@@ -1,49 +1,54 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ArrowRight, Star, Shield, Award, Sparkles,
-  Scissors, Truck, HeartHandshake, CheckCircle2, ChevronRight, Eye
+  ArrowRight,
+  Scissors,
+  Award,
+  Truck,
+  Shield,
+  Star,
+  Sparkles,
+  ChevronRight,
+  ShoppingBag,
+  MessageCircle
 } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 import { useCompany } from '../hooks/useCompany'
 import { fetchProducts, getLocalProducts } from '../utils/productsStore'
 import Hero from '../components/Hero'
-import Workflow from '../components/Workflow'
-import WhyWorkWithMe from '../components/WhyWorkWithMe'
-import Technologies from '../components/Technologies'
 
 const WHATSAPP_NUMBER = '923247201988'
 
-const featuredCollections = [
+const curatedCategories = [
   {
     id: 'formal',
+    category: 'Formal',
     title: 'Formal Couture',
-    subtitle: 'Two & Three-Piece Bespoke Suits',
-    description: 'Impeccable wool-cashmere blend tailoring, precision canvas interior, and hand-stitched lapels crafted for business and formal galas.',
+    subtitle: 'Bespoke Suits & Tuxedos',
+    description: 'Precision Italian wool blends with floating canvas interiors, hand-finished pick lapels, and tailored executive cuts.',
     image: '/collection-formal.jpg',
     badge: 'Flagship Edition',
-    styles: '15+ Bespoke Cuts',
-    link: '/collections?category=Formal',
+    path: '/collections?category=Formal',
   },
   {
     id: 'traditional',
+    category: 'Traditional',
     title: 'Royal Heritage',
-    subtitle: 'Festive & Wedding Kurta Sets',
-    description: 'Intricately embroidered Pakistani shalwar kameez and festive kurtas featuring hand needlework on silk-cotton and raw silk fabrics.',
+    subtitle: 'Kurta & Shalwar Kameez',
+    description: 'Festive raw silk and Egyptian cotton garments featuring artisanal hand needlework, mandarin collars, and royal drapes.',
     image: '/collection-traditional.jpg',
-    badge: 'Festive Exclusive',
-    styles: '18+ Handcrafted Styles',
-    link: '/collections?category=Traditional',
+    badge: 'Festive Classic',
+    path: '/collections?category=Traditional',
   },
   {
     id: 'casual',
-    title: 'Urban Comfort',
-    subtitle: 'Premium Fleece & Streetwear',
-    description: 'Modern luxury loungewear, heavyweight fleece hoodies, and tapered joggers engineered for sophisticated everyday ease.',
+    category: 'Casual',
+    title: 'Modern Luxury',
+    subtitle: 'Contemporary Streetwear',
+    description: 'Heavyweight fleece hoodies, structured luxury loungewear, and tapered joggers engineered for everyday distinction.',
     image: '/collection-casual.jpg',
     badge: 'New Season',
-    styles: '20+ Modern Fits',
-    link: '/collections?category=Casual',
+    path: '/collections?category=Casual',
   },
 ]
 
@@ -51,106 +56,113 @@ export default function Home() {
   const { theme } = useTheme()
   const { company } = useCompany()
   const isDark = theme === 'dark'
-  const [products, setProducts] = useState(() => getLocalProducts())
-  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [featuredProducts, setFeaturedProducts] = useState(() => getLocalProducts().slice(0, 3))
 
   useEffect(() => {
     fetchProducts().then((data) => {
-      if (data && data.length > 0) setProducts(data)
+      if (data && data.length > 0) {
+        setFeaturedProducts(data.slice(0, 3))
+      }
     })
-    const onUpdate = () => setProducts(getLocalProducts())
+    const onUpdate = () => {
+      setFeaturedProducts(getLocalProducts().slice(0, 3))
+    }
     window.addEventListener('products_updated', onUpdate)
     return () => window.removeEventListener('products_updated', onUpdate)
   }, [])
 
-  const companyName = company?.name || 'Zhobie\'s Store'
+  const companyName = company?.name || 'Zhobie’s Store'
 
   return (
     <div className="overflow-hidden">
-      {/* ── 1. Hero Section ── */}
+      {/* ── 1. Hero Grand Entryway ── */}
       <Hero />
 
-      {/* ── 2. Trust Marquee / Highlights Bar ── */}
-      <div className={`py-6 border-y ${
-        isDark ? 'border-[#b8860b]/20 bg-[#0a0806]' : 'border-[#b8860b]/20 bg-[#f7f3ec]'
-      }`}>
+      {/* ── 2. Minimalist Trust Strip ── */}
+      <section
+        className={`py-6 border-y transition-colors duration-300 ${
+          isDark
+            ? 'border-[#b8860b]/15 bg-[#0a0806]'
+            : 'border-[#b8860b]/20 bg-[#f7f3ec]'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div className="flex items-center justify-center gap-3">
-            <div className="w-10 h-10 border border-[#b8860b]/30 flex items-center justify-center text-[#d4a017] shrink-0">
+            <div className="w-10 h-10 border border-[#b8860b]/30 flex items-center justify-center text-[#d4a017] shrink-0 bg-[#b8860b]/5">
               <Scissors size={18} />
             </div>
             <div className="text-left">
               <div className={`text-xs font-serif font-bold tracking-wide ${isDark ? 'text-white' : 'text-neutral-900'}`}>
-                Master Tailoring
+                Bespoke Craft
               </div>
-              <div className="text-[11px] text-neutral-500">Hand-finished bespoke fit</div>
+              <div className="text-[11px] text-neutral-500">Hand-finished custom fit</div>
             </div>
           </div>
 
           <div className="flex items-center justify-center gap-3">
-            <div className="w-10 h-10 border border-[#b8860b]/30 flex items-center justify-center text-[#d4a017] shrink-0">
+            <div className="w-10 h-10 border border-[#b8860b]/30 flex items-center justify-center text-[#d4a017] shrink-0 bg-[#b8860b]/5">
               <Award size={18} />
             </div>
             <div className="text-left">
               <div className={`text-xs font-serif font-bold tracking-wide ${isDark ? 'text-white' : 'text-neutral-900'}`}>
-                Pure Fabrics
+                Pure Textiles
               </div>
-              <div className="text-[11px] text-neutral-500">Wool, silk & Egyptian cotton</div>
+              <div className="text-[11px] text-neutral-500">Wool, silk & Giza cotton</div>
             </div>
           </div>
 
           <div className="flex items-center justify-center gap-3">
-            <div className="w-10 h-10 border border-[#b8860b]/30 flex items-center justify-center text-[#d4a017] shrink-0">
+            <div className="w-10 h-10 border border-[#b8860b]/30 flex items-center justify-center text-[#d4a017] shrink-0 bg-[#b8860b]/5">
               <Truck size={18} />
             </div>
             <div className="text-left">
               <div className={`text-xs font-serif font-bold tracking-wide ${isDark ? 'text-white' : 'text-neutral-900'}`}>
-                Nationwide Delivery
+                Doorstep Delivery
               </div>
-              <div className="text-[11px] text-neutral-500">Fast insured delivery</div>
+              <div className="text-[11px] text-neutral-500">Nationwide & Worldwide</div>
             </div>
           </div>
 
           <div className="flex items-center justify-center gap-3">
-            <div className="w-10 h-10 border border-[#b8860b]/30 flex items-center justify-center text-[#d4a017] shrink-0">
+            <div className="w-10 h-10 border border-[#b8860b]/30 flex items-center justify-center text-[#d4a017] shrink-0 bg-[#b8860b]/5">
               <Shield size={18} />
             </div>
             <div className="text-left">
               <div className={`text-xs font-serif font-bold tracking-wide ${isDark ? 'text-white' : 'text-neutral-900'}`}>
-                Fitting Guarantee
+                Fit Insurance
               </div>
-              <div className="text-[11px] text-neutral-500">Free fitting adjustments</div>
+              <div className="text-[11px] text-neutral-500">Free 14-day adjustments</div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* ── 3. Curated Collections Preview ── */}
-      <section className="py-24 relative">
+      <section className="py-20 md:py-28 relative">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
             <div>
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3 mb-2.5">
                 <div className="h-px w-10 bg-[#b8860b]" />
                 <span className="text-[#b8860b] text-xs tracking-[0.3em] uppercase font-semibold">
-                  Curated Collections
+                  Curated Portfolios
                 </span>
               </div>
-              <h2 className={`font-serif text-3xl sm:text-5xl font-bold ${isDark ? 'text-white' : 'text-neutral-900'}`}>
-                Signature <span className="gradient-text">Lookbooks</span>
+              <h2 className={`font-serif text-3xl sm:text-4xl lg:text-5xl font-bold ${isDark ? 'text-white' : 'text-neutral-900'}`}>
+                Signature <span className="gradient-text">Collections</span>
               </h2>
             </div>
             <Link
               to="/collections"
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#d4a017] hover:text-[#b8860b] transition-colors group"
             >
-              <span>Explore All Collections</span>
+              <span>Explore All Lookbooks</span>
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {featuredCollections.map((col) => (
+            {curatedCategories.map((col) => (
               <div
                 key={col.id}
                 className={`group relative overflow-hidden border transition-all duration-500 flex flex-col justify-between ${
@@ -160,22 +172,21 @@ export default function Home() {
                 }`}
               >
                 <div>
-                  <div className="relative h-[380px] overflow-hidden">
+                  <div className="relative h-[340px] sm:h-[380px] overflow-hidden">
                     <img
                       src={col.image}
                       alt={col.title}
                       className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
                     <div className="absolute top-4 left-4">
                       <span className="px-3 py-1 bg-[#b8860b] text-white text-[10px] uppercase font-bold tracking-widest shadow-md">
                         {col.badge}
                       </span>
                     </div>
-                    <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <span className="text-[#d4a017] text-xs font-mono font-medium">{col.styles}</span>
+                    <div className="absolute bottom-5 left-5 right-5 text-white">
+                      <span className="text-[#d4a017] text-[11px] font-mono font-medium uppercase tracking-wider">{col.subtitle}</span>
                       <h3 className="font-serif text-2xl font-bold tracking-wide mt-0.5">{col.title}</h3>
-                      <p className="text-neutral-300 text-xs mt-1">{col.subtitle}</p>
                     </div>
                   </div>
 
@@ -186,23 +197,21 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className={`p-6 pt-0 border-t ${isDark ? 'border-[#b8860b]/10' : 'border-[#b8860b]/15'} mt-4 flex items-center justify-between`}>
+                <div className={`p-6 pt-0 border-t ${isDark ? 'border-[#b8860b]/10' : 'border-[#b8860b]/15'} mt-2 flex items-center justify-between`}>
                   <Link
-                    to={col.link}
+                    to={col.path}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#d4a017] hover:text-[#b8860b] transition-colors"
                   >
-                    <span>View Pieces</span>
+                    <span>View Category</span>
                     <ChevronRight size={14} />
                   </Link>
 
-                  <a
-                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi!%20I%20am%20interested%20in%20custom%20stitching%20for%20the%20${encodeURIComponent(col.title)}%20collection.`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] text-neutral-500 hover:text-green-500 transition-colors flex items-center gap-1"
+                  <Link
+                    to="/contact"
+                    className="text-[11px] text-neutral-500 hover:text-[#d4a017] transition-colors"
                   >
-                    <span>Inquire Style</span>
-                  </a>
+                    Custom Fit
+                  </Link>
                 </div>
               </div>
             ))}
@@ -210,30 +219,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 4. Featured Bestsellers Spotlight ── */}
-      <section className={`py-24 border-y ${
-        isDark ? 'border-[#b8860b]/15 bg-[#0f0d0a]' : 'border-[#b8860b]/15 bg-[#f5f0e8]/50'
-      }`}>
+      {/* ── 4. Curated Bestsellers Showcase ── */}
+      <section
+        className={`py-20 md:py-24 border-y transition-colors duration-300 ${
+          isDark
+            ? 'border-[#b8860b]/15 bg-[#0f0c09]'
+            : 'border-[#b8860b]/15 bg-[#fbf8f2]'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <div className="h-px w-10 bg-[#b8860b]" />
-              <span className="text-[#b8860b] text-xs tracking-[0.3em] uppercase font-semibold">
-                Client Favorites
-              </span>
-              <div className="h-px w-10 bg-[#b8860b]" />
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+            <div>
+              <div className="flex items-center gap-3 mb-2.5">
+                <div className="h-px w-10 bg-[#b8860b]" />
+                <span className="text-[#b8860b] text-xs tracking-[0.3em] uppercase font-semibold">
+                  Client Favorites
+                </span>
+              </div>
+              <h2 className={`font-serif text-3xl sm:text-4xl lg:text-5xl font-bold ${isDark ? 'text-white' : 'text-neutral-900'}`}>
+                Featured <span className="gradient-text">Bestsellers</span>
+              </h2>
             </div>
-            <h2 className={`font-serif text-3xl sm:text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-neutral-900'}`}>
-              Featured <span className="gradient-text">Bestsellers</span>
-            </h2>
-            <p className={`text-sm ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
-              Hand-cut and precision-tailored garments ready to be styled for your defining moments.
-            </p>
-            <div className="gold-divider mt-6 mx-auto" />
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#d4a017] hover:text-[#b8860b] transition-colors group"
+            >
+              <span>View Full Catalog</span>
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.slice(0, 3).map((product) => (
+            {featuredProducts.map((product) => (
               <div
                 key={product.id}
                 className={`group border transition-all duration-300 flex flex-col justify-between ${
@@ -248,30 +265,25 @@ export default function Home() {
                       src={product.image || '/collection-formal.jpg'}
                       alt={product.name}
                       className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                      onError={(e) => { e.currentTarget.src = '/collection-formal.jpg' }}
+                      onError={(e) => {
+                        e.currentTarget.src = '/collection-formal.jpg'
+                      }}
                     />
                     {product.badge && (
                       <span className="absolute top-3 left-3 px-2.5 py-0.5 text-[9px] uppercase tracking-wider font-bold bg-[#b8860b] text-white">
                         {product.badge}
                       </span>
                     )}
-                    <button
-                      onClick={() => setSelectedProduct(product)}
-                      className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-xs uppercase tracking-wider font-semibold cursor-pointer"
-                    >
-                      <Eye size={16} /> Quick View
-                    </button>
                   </div>
 
-                  <div className="p-5">
-                    <div className="flex items-center justify-between text-xs mb-1">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between text-xs mb-1.5">
                       <span className="text-[#b8860b] uppercase tracking-wider font-medium text-[10px]">
                         {product.category}
                       </span>
                       <div className="flex items-center gap-1 text-[#d4a017]">
                         <Star size={12} className="fill-[#d4a017]" />
                         <span className="text-xs font-semibold">{product.rating || 5}.0</span>
-                        <span className="text-neutral-500 text-[10px]">({product.reviews || 24})</span>
                       </div>
                     </div>
 
@@ -281,7 +293,7 @@ export default function Home() {
                       {product.name}
                     </h3>
 
-                    <div className="text-[#d4a017] font-semibold text-base mt-2">
+                    <div className="text-[#d4a017] font-semibold text-base mt-2 font-mono">
                       {product.price}
                     </div>
 
@@ -291,139 +303,147 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className={`p-5 pt-0 border-t ${isDark ? 'border-[#b8860b]/10' : 'border-[#b8860b]/15'} mt-3 flex items-center gap-2`}>
-                  <button
-                    onClick={() => setSelectedProduct(product)}
-                    className="flex-1 py-2 text-xs border border-[#b8860b]/30 text-[#d4a017] hover:bg-[#b8860b]/10 transition-colors uppercase font-semibold tracking-wider cursor-pointer"
+                <div className={`p-6 pt-0 border-t ${isDark ? 'border-[#b8860b]/10' : 'border-[#b8860b]/15'} mt-3 flex items-center gap-3`}>
+                  <Link
+                    to="/products"
+                    className="flex-1 py-2.5 text-xs border border-[#b8860b]/30 text-[#d4a017] hover:bg-[#b8860b]/10 transition-colors uppercase font-semibold tracking-wider text-center"
                   >
-                    Details
-                  </button>
+                    View Details
+                  </Link>
                   <a
                     href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi!%20I%20would%20like%20to%20order%20the%20${encodeURIComponent(product.name)}%20(${encodeURIComponent(product.price)}).`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 py-2 text-xs bg-[#b8860b] hover:bg-[#d4a017] text-white transition-colors uppercase font-semibold tracking-wider text-center"
+                    className="flex-1 py-2.5 text-xs bg-[#b8860b] hover:bg-[#d4a017] text-white transition-colors uppercase font-semibold tracking-wider text-center"
                   >
-                    WhatsApp Order
+                    Order Fast
                   </a>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-14 text-center">
+          <div className="mt-12 text-center">
             <Link
               to="/products"
-              className="inline-flex items-center gap-3 px-8 py-3.5 bg-[#b8860b] hover:bg-[#d4a017] text-white text-xs uppercase tracking-widest font-semibold transition-all shadow-lg shadow-[#b8860b]/20"
+              className="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-[#b8860b] to-[#d4a017] text-[#0d0b09] text-xs uppercase tracking-widest font-semibold transition-all hover:brightness-110 shadow-lg shadow-[#b8860b]/20"
             >
-              <span>Explore Complete Product Catalog</span>
-              <ArrowRight size={16} />
+              <ShoppingBag size={15} />
+              <span>Browse All Ready-to-Wear Products</span>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── 5. Process & Craftsmanship ── */}
-      <Workflow />
-
-      {/* ── 6. Value Proposition ── */}
-      <WhyWorkWithMe />
-
-      {/* ── 7. Fabric Materials Range ── */}
-      <Technologies />
-
-      {/* ── 8. VIP Bespoke Consultation CTA Banner ── */}
-      <section className={`py-20 relative border-t ${
-        isDark ? 'border-[#b8860b]/20 bg-[#080604]' : 'border-[#b8860b]/20 bg-[#f3ece0]'
-      }`}>
-        <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
-          <div className="w-14 h-14 mx-auto border border-[#b8860b]/50 flex items-center justify-center text-[#d4a017] mb-6 font-serif font-bold text-2xl">
-            Z
-          </div>
-          <h2 className={`font-serif text-3xl sm:text-4xl md:text-5xl font-bold mb-4 ${
-            isDark ? 'text-white' : 'text-neutral-900'
-          }`}>
-            Ready to Commission Your <span className="gradient-text">Bespoke Attire?</span>
-          </h2>
-          <p className={`max-w-xl mx-auto text-sm sm:text-base leading-relaxed mb-8 ${
-            isDark ? 'text-neutral-400' : 'text-neutral-600'
-          }`}>
-            Experience personalized measurements, exquisite fabric selection, and bespoke tailoring designed to reflect your individuality.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link
-              to="/contact"
-              className="px-8 py-3.5 bg-[#b8860b] hover:bg-[#d4a017] text-white text-xs uppercase tracking-widest font-semibold transition-all shadow-lg shadow-[#b8860b]/20 inline-flex items-center gap-2"
-            >
-              <span>Book Tailoring Consultation</span>
-              <ArrowRight size={16} />
-            </Link>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20${encodeURIComponent(companyName)}!%20I%20want%20to%20discuss%20a%20custom%20suit%20order.`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`px-8 py-3.5 border transition-all text-xs uppercase tracking-widest font-semibold inline-flex items-center gap-2 ${
-                isDark
-                  ? 'border-[#b8860b]/40 text-[#d4a017] hover:bg-[#b8860b]/10'
-                  : 'border-[#b8860b]/50 text-[#b8860b] hover:bg-[#b8860b]/10 bg-white'
-              }`}
-            >
-              <span>Direct WhatsApp Chat</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Quick View Modal ── */}
-      {selectedProduct && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fade-in">
-          <div className={`relative w-full max-w-xl border border-[#b8860b]/30 p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto ${
-            isDark ? 'bg-[#0e0c0a] text-white' : 'bg-white text-neutral-900'
-          }`}>
-            <button
-              onClick={() => setSelectedProduct(null)}
-              className="absolute top-4 right-4 text-neutral-400 hover:text-white p-1"
-            >
-              ✕
-            </button>
-            <div className="grid sm:grid-cols-2 gap-6 items-center">
-              <div className="relative h-64 overflow-hidden rounded border border-[#b8860b]/30">
+      {/* ── 5. Clean Atelier Heritage Spotlight ── */}
+      <section className="py-20 md:py-28 relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            {/* Visual Column */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative border border-[#b8860b]/30 p-2 bg-[#b8860b]/5">
                 <img
-                  src={selectedProduct.image || '/collection-formal.jpg'}
-                  alt={selectedProduct.name}
-                  className="w-full h-full object-cover"
+                  src="/collection-formal.jpg"
+                  alt="Zhobie Atelier Craftsmanship"
+                  className="w-full h-[400px] object-cover"
                 />
-              </div>
-              <div>
-                <span className="text-[#b8860b] text-[10px] uppercase tracking-widest font-bold">
-                  {selectedProduct.category}
-                </span>
-                <h3 className="font-serif text-2xl font-bold mt-1">{selectedProduct.name}</h3>
-                <div className="text-xl font-semibold text-[#d4a017] mt-2">{selectedProduct.price}</div>
-                <p className={`text-xs mt-3 leading-relaxed ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
-                  {selectedProduct.description}
-                </p>
-                <div className="mt-4 flex flex-col gap-2">
-                  <a
-                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi!%20I%20am%20interested%20in%20ordering%20${encodeURIComponent(selectedProduct.name)}%20(${encodeURIComponent(selectedProduct.price)}).`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-2.5 bg-[#b8860b] hover:bg-[#d4a017] text-white text-xs uppercase tracking-wider font-semibold text-center transition-all"
-                  >
-                    Confirm Order via WhatsApp
-                  </a>
-                  <Link
-                    to="/contact"
-                    className="w-full py-2 text-xs border border-[#b8860b]/30 text-[#d4a017] hover:bg-[#b8860b]/10 text-center uppercase tracking-wider font-semibold transition-all"
-                  >
-                    Request Custom Measurements
-                  </Link>
+                <div className="absolute -bottom-5 -right-5 bg-[#0d0b09] text-white p-5 border border-[#b8860b]/40 shadow-2xl hidden sm:block">
+                  <div className="text-2xl font-serif font-bold text-[#d4a017]">30+</div>
+                  <div className="text-[10px] uppercase tracking-wider text-neutral-400">Years of Master Tailoring</div>
                 </div>
+              </div>
+            </div>
+
+            {/* Content Column */}
+            <div className="lg:col-span-7">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-px w-10 bg-[#b8860b]" />
+                <span className="text-[#b8860b] text-xs tracking-[0.3em] uppercase font-semibold">
+                  The Sartorial Difference
+                </span>
+              </div>
+              <h2 className={`font-serif text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 ${isDark ? 'text-white' : 'text-neutral-900'}`}>
+                Crafted for Connoisseurs, <span className="gradient-text">Tailored for You</span>
+              </h2>
+              <p className={`text-sm sm:text-base leading-relaxed mb-6 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                At {companyName}, tailoring is not just an industry — it is an inherited fine art. We combine timeless British Savile Row structuring with Pakistan’s deep heritage of artisanal hand needlework.
+              </p>
+
+              <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                <div className={`p-4 border ${isDark ? 'border-[#b8860b]/15 bg-[#120f0c]' : 'border-[#b8860b]/20 bg-white'}`}>
+                  <h4 className={`font-serif font-bold text-sm mb-1 ${isDark ? 'text-white' : 'text-neutral-900'}`}>
+                    Floating Horsehair Canvas
+                  </h4>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    Naturally shapes to your posture over time, delivering structured elegance without stiffness.
+                  </p>
+                </div>
+                <div className={`p-4 border ${isDark ? 'border-[#b8860b]/15 bg-[#120f0c]' : 'border-[#b8860b]/20 bg-white'}`}>
+                  <h4 className={`font-serif font-bold text-sm mb-1 ${isDark ? 'text-white' : 'text-neutral-900'}`}>
+                    Digital Sizing Vault
+                  </h4>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    Your unique measurements are securely archived for instant reorders anytime.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <Link
+                  to="/about"
+                  className="btn-secondary !px-7 !py-3.5 text-xs uppercase tracking-widest font-semibold flex items-center gap-2"
+                >
+                  <span>Read Brand Story & Size Guide</span>
+                  <ArrowRight size={15} />
+                </Link>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </section>
+
+      {/* ── 6. Clean VIP Consultation CTA ── */}
+      <section
+        className={`py-16 md:py-20 relative border-t transition-colors duration-300 ${
+          isDark
+            ? 'border-[#b8860b]/15 bg-[#090705]'
+            : 'border-[#b8860b]/20 bg-[#f4eee4]'
+        }`}
+      >
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+          <div className="w-12 h-12 mx-auto border border-[#b8860b]/50 flex items-center justify-center text-[#d4a017] mb-5 font-serif font-bold text-xl bg-[#b8860b]/10">
+            Z
+          </div>
+          <h2 className={`font-serif text-3xl sm:text-4xl font-bold mb-3 ${isDark ? 'text-white' : 'text-neutral-900'}`}>
+            Commission Your <span className="gradient-text">Bespoke Attire</span>
+          </h2>
+          <p className={`max-w-lg mx-auto text-xs sm:text-sm leading-relaxed mb-8 ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
+            Have an upcoming wedding, corporate gala, or desire a custom-tailored piece? Connect with our master cutter today.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/contact"
+              className="px-8 py-3.5 bg-gradient-to-r from-[#b8860b] to-[#d4a017] text-[#0d0b09] text-xs uppercase tracking-widest font-semibold transition-all hover:brightness-110 shadow-lg shadow-[#b8860b]/20 inline-flex items-center gap-2"
+            >
+              <span>Book Tailoring Consultation</span>
+              <ArrowRight size={15} />
+            </Link>
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20${encodeURIComponent(companyName)}!%20I%20would%20like%20to%20discuss%20a%20bespoke%20order.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`px-8 py-3.5 border transition-all text-xs uppercase tracking-widest font-semibold inline-flex items-center gap-2 ${
+                isDark
+                  ? 'border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10'
+                  : 'border-[#25D366]/50 text-[#25D366] hover:bg-[#25D366]/10 bg-white'
+              }`}
+            >
+              <MessageCircle size={15} />
+              <span>WhatsApp Direct</span>
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
